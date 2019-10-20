@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "GA.h"
+#include "Individ.h"
+#include "Path.h"
 
 GA::GA()
 {
@@ -77,7 +79,53 @@ void GA::calculateAllPath()
 }
 
 
+// генерируем особь
+Individ * GA::createIndividual()
+{
+	//int *currentPopulation = new int[n + 1];
 
+	vector<int> currentPopulation(n+1);
+
+	for (int i = 0; i < n; i++) {
+		currentPopulation[i] = i;
+	}
+	// на первое место нужно поставить стартовую вершину, и потом ее не трогать, при перемешивании
+	
+	for (int i = 0; i < n; i++) {
+		if (currentPopulation[i] == startVertex) {
+			int tmp = currentPopulation[0];
+			currentPopulation[0] = currentPopulation[i];
+			currentPopulation[i] = tmp;
+		}
+	}
+
+	// ¬ конце должны вернутьс€ в стартовую вершину, и потом ее не трогать, при перемешивании
+	currentPopulation[n] = startVertex;
+
+	int firstRand = 0;
+	int secondRand = 0;
+	int tmp = 0;
+	for (int i = 0; i < n * 10; i++) {
+		firstRand = rand() % (n-1) + 1;
+		secondRand = rand() % (n-1) + 1;
+
+		tmp = currentPopulation[firstRand];
+		currentPopulation[firstRand] = currentPopulation[secondRand];
+		currentPopulation[secondRand] = tmp;
+	}
+
+	vector<int> result;
+	for (int i = 0; i < n + 1; i++)
+		result.push_back(currentPopulation[i]);
+
+	Individ* individ = new Individ();
+	individ->path = result;
+
+	return individ;
+}
+
+
+// »щем путь от вершины ƒо всех остальных
 void GA::calculatePathFromVertexToAll(int startVertex)
 {
 	int s = startVertex;
@@ -104,73 +152,132 @@ void GA::calculatePathFromVertexToAll(int startVertex)
 	}
 
 	// сохран€ем путь
-	vector<vector<int>> pathFromTo;
+	vector<Path*> pathFromTo;
+
 	for (int t = 0; t < data.size(); t++) {
+
+		Path* currPath = new Path();
+		currPath->from = startVertex;
+		currPath->to = t;
+
+
+
 		vector<int> path;
 		for (int v = t; v != s; v = p[v])
 			path.push_back(v);
 		path.push_back(s);
 		reverse(path.begin(), path.end());
 
-		#ifdef DEBUG
+#ifdef DEBUG
 		cout << "path from " << s << " to " << t << ": ";
 
 		for (int i = 0; i < path.size(); i++) {
 			cout << path[i] << " ";
 		}
 		cout << endl;
-		#endif
+#endif
 
-		pathFromTo.push_back(path);
+		//pathFromTo.push_back(path);
 
+		// устанавливаем маршрут в текущий путь
+		currPath->path = path;
+
+		// ¬ычисл€ем длину пути
+		currPath->weight = calculateWeightPath(currPath);
+
+		// —охран€ем путь в глобальный массив
+		pathFromTo.push_back(currPath);
 	}
-	#ifdef DEBUG
+#ifdef DEBUG
 	cout << endl;
-	#endif
+#endif
 
 	this->paths.push_back(pathFromTo);
 }
 
-
-
-vector<int> GA::createIndividual()
+// –асчет длины пути
+int GA::calculateWeightPath(Path * currPath)
 {
-	int *currentPopulation = new int[n];
-	for (int i = 0; i <n; i++) {
-		currentPopulation[i] = i;
+	int sum = 0;
+	for (int i = 0; i < currPath->path.size() - 1; i++) {
+		int first = currPath->path[i];
+		int second = currPath->path[i + 1];
+
+		int weight = -1;
+
+		for (int j = 0; j < data[first].size(); j++) {
+			if (data[first][j].first == second) {
+				weight = data[first][j].second;
+				break;
+			}
+		}
+
+		if (weight != -1)
+			sum += weight;
+		else
+			cout << "====================error=========================" << endl;
 	}
-
-	int firstRand = 0;
-	int secondRand = 0;
-	int tmp = 0;
-	for (int i = 0; i < n * 10; i++) {
-		firstRand = rand() % n + 0;
-		secondRand = rand() % n + 0;
-
-		tmp = currentPopulation[firstRand];
-		currentPopulation[firstRand] = currentPopulation[secondRand];
-		currentPopulation[secondRand] = tmp;
-	}
-
-	vector<int> result;
-	for (int i = 0; i < n; i++)
-		result.push_back(currentPopulation[i]);
-
-	return result;
+	return sum;
 }
+
 
 
 void GA::createFirstPopulation()
 {
 	for (int i = 0; i < sizePopulation; i++) {
-		vector<int> popul = createIndividual();
+		Individ* individ = createIndividual();
 		#ifdef  DEBUG
 		cout << "individ # " << i + 1 << endl;
-		for (int j = 0; j < popul.size(); j++)
-			cout << popul[j] << " ";
+		for (int j = 0; j < individ->path.size(); j++)
+			cout << individ->path[j] << " ";
 		cout << endl;
 		#endif //  DEBUG
 
-		population.push_back(popul);
+		population.push_back(individ);
 	}
+}
+
+void GA::fitness()
+{
+	for (int i = 0; i < sizePopulation; i++) {
+		int x = fitnessForIndivid(population[i]);
+		population[i]->fitness = x;
+	}
+	cout << "";
+}
+
+int GA::fitnessForIndivid(Individ * individ)
+{
+	int sum = 0;
+	for (int i = 0; i < individ->path.size() - 1; i++) {
+		int first = individ->path[i];
+		int second = individ->path[i + 1];
+
+		int weight = -1;
+
+		weight = paths[first][second]->weight;
+		
+		if (weight != -1)
+			sum += weight;
+		else
+			cout << "=========error==========" << endl;
+	}
+
+	return sum;
+}
+
+void GA::calculatePercent() {
+	double ss = 0.0;
+
+	for (int i = 0; i < sizePopulation; i++) {
+		double tmp = 1.0 / population[i]->fitness;
+		ss += tmp;
+	}
+
+	for (int i = 0; i < sizePopulation; i++) {
+		double tmp = 1.0 / population[i]->fitness;
+		tmp = tmp / ss;
+		population[i]->percent = tmp;
+	}
+	cout << "";
 }

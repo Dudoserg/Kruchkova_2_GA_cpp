@@ -147,14 +147,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Individ.h" />
     <ClInclude Include="kruchkova_2.h" />
     <ClInclude Include="GA.h" />
+    <ClInclude Include="Path.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Individ.cpp" />
     <ClCompile Include="kruchkova_2.cpp" />
     <ClCompile Include="GA.cpp" />
+    <ClCompile Include="Path.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
