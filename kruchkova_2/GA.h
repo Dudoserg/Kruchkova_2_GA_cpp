@@ -7,22 +7,29 @@
 using std::vector;
 using std::pair;
 using namespace std;
-class Deickstra
+class GA
 {
 public:
 
-	Deickstra();
+	GA();
 
-	~Deickstra();
+	~GA();
 
 	// fields
 	const int INF = 1000000000;
+	int sizePopulation = 5;
+
 	vector<vector<pair<int, int>>> data;
 	int n;
 	vector<vector<vector<int>>> paths;
 
+	vector<vector<int>> population;
+
 	// methods
 	void start();
+
+	// начальна€ попул€ци€
+	void createFirstPopulation();
 
 private:
 	// fields
@@ -35,6 +42,13 @@ private:
 	void calculatePathFromVertexToAll(int startVertex);
 
 	void calculateAllPath();
+
+	// создаем одну особь
+	vector<int> createIndividual();
+
+	
+
+
 
 };
 

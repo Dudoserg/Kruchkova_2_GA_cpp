@@ -1,29 +1,29 @@
 #include "stdafx.h"
-#include "Deickstra.h"
+#include "GA.h"
 
-Deickstra::Deickstra()
+GA::GA()
 {
 }
 
 
-Deickstra::~Deickstra()
+GA::~GA()
 {
 }
 
-void Deickstra::start()
+void GA::start()
 {
 	init();
 }
 
 //
-void Deickstra::init()
+void GA::init()
 {
 	readData();
 	calculateAllPath();
 }
 
 // —читываем данные в g
-void Deickstra::readData()
+void GA::readData()
 {
 	vector<pair<int, int>> zero;
 	zero.push_back(pair<int, int>(1, 1));
@@ -70,13 +70,15 @@ void Deickstra::readData()
 	n = data.size();
 }
 
-void Deickstra::calculateAllPath()
+void GA::calculateAllPath()
 {
 	for (int i = 0; i < data.size(); i++)
 		calculatePathFromVertexToAll(i);
 }
 
-void Deickstra::calculatePathFromVertexToAll(int startVertex)
+
+
+void GA::calculatePathFromVertexToAll(int startVertex)
 {
 	int s = startVertex;
 	vector<int> d(n, INF), p(n);
@@ -131,3 +133,44 @@ void Deickstra::calculatePathFromVertexToAll(int startVertex)
 
 
 
+vector<int> GA::createIndividual()
+{
+	int *currentPopulation = new int[n];
+	for (int i = 0; i <n; i++) {
+		currentPopulation[i] = i;
+	}
+
+	int firstRand = 0;
+	int secondRand = 0;
+	int tmp = 0;
+	for (int i = 0; i < n * 10; i++) {
+		firstRand = rand() % n + 0;
+		secondRand = rand() % n + 0;
+
+		tmp = currentPopulation[firstRand];
+		currentPopulation[firstRand] = currentPopulation[secondRand];
+		currentPopulation[secondRand] = tmp;
+	}
+
+	vector<int> result;
+	for (int i = 0; i < n; i++)
+		result.push_back(currentPopulation[i]);
+
+	return result;
+}
+
+
+void GA::createFirstPopulation()
+{
+	for (int i = 0; i < sizePopulation; i++) {
+		vector<int> popul = createIndividual();
+		#ifdef  DEBUG
+		cout << "individ # " << i + 1 << endl;
+		for (int j = 0; j < popul.size(); j++)
+			cout << popul[j] << " ";
+		cout << endl;
+		#endif //  DEBUG
+
+		population.push_back(popul);
+	}
+}
