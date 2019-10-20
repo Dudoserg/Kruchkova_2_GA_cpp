@@ -3,6 +3,9 @@
 #include "Individ.h"
 #include "Path.h"
 #include <time.h>
+#include <sstream>
+#include <algorithm>
+
 
 GA::GA()
 {
@@ -222,7 +225,6 @@ int GA::calculateWeightPath(Path * currPath)
 }
 
 
-
 void GA::createFirstPopulation()
 {
 	for (int i = 0; i < sizePopulation; i++) {
@@ -238,6 +240,7 @@ void GA::createFirstPopulation()
 	}
 }
 
+
 void GA::fitness()
 {
 	for (int i = 0; i < sizePopulation; i++) {
@@ -246,6 +249,7 @@ void GA::fitness()
 	}
 	cout << "";
 }
+
 
 int GA::fitnessForIndivid(Individ * individ)
 {
@@ -267,6 +271,7 @@ int GA::fitnessForIndivid(Individ * individ)
 	return sum;
 }
 
+
 void GA::calculatePercent() {
 	double ss = 0.0;
 
@@ -281,4 +286,49 @@ void GA::calculatePercent() {
 		population[i]->percent = tmp;
 	}
 	cout << "";
+}
+
+
+void GA::reproduction() {
+	
+	//vector<double> randarr;
+	//for (int i = 0; i < 10000; i++) {
+	//	double random = (rand() % 100001) / 100000.0;
+	//	randarr.push_back(random);
+	//}
+	//std::sort(randarr.begin(), randarr.end());
+	//reverse(randarr.begin(), randarr.end());
+	//cout << endl;
+	//for (int i = 0; i < randarr.size(); i++)
+	//	cout << randarr[i] << endl;
+
+	double random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	double sum = 0.0;
+
+	int indexFirstParent = 0;
+
+	for (int i = 0; i < population.size(); i++) {
+		sum += population[i]->percent;
+		if (random < sum) {
+			indexFirstParent = i;
+			break;
+		}		
+	}
+	
+	int indexSecondParent = -1;
+	do {
+		random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		sum = 0.0;
+		
+		for (int i = 0; i < population.size(); i++) {
+			sum += population[i]->percent;
+			if (random < sum) {
+				indexSecondParent = i;
+				break;
+			}
+		}
+	} while (indexSecondParent == indexFirstParent);
+
+	cout << indexFirstParent << " " << indexSecondParent << endl;
+	
 }

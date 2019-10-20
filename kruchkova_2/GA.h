@@ -39,6 +39,8 @@ public:
 
 	void calculatePercent();
 
+	void reproduction();
+
 private:
 	// fields
 
