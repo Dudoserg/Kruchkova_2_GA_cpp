@@ -2,6 +2,7 @@
 #include "GA.h"
 #include "Individ.h"
 #include "Path.h"
+#include <time.h>
 
 GA::GA()
 {

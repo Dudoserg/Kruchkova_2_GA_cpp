@@ -17,6 +17,11 @@ public:
 	vector<int> path;
 	int fitness;
 	double percent;
+
+	static bool testSort(const Individ* a, const Individ* b)
+	{
+		return a->percent > b->percent;
+	}
 private:
 };
 

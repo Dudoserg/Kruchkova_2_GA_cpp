@@ -19,7 +19,7 @@ public:
 
 	// fields
 	const int INF = 1000000000;
-	int sizePopulation = 5;
+	int sizePopulation = 6;
 	int startVertex = 0;
 
 	vector<vector<pair<int, int>>> data;
