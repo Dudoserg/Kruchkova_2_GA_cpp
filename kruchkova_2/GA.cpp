@@ -390,17 +390,17 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 	mas[1] = secondParent;
 
 	// Êîïèğóåì ñğåäíşş ÷àñòü
-	set<int> centralPart_1;
-	set<int> centralPart_2;
-	vector<set<int>*> centralPart;
+	vector<int> centralPart_1;
+	vector<int> centralPart_2;
+	vector<vector<int>*> centralPart;
 
 	if (numParent == 0) {
-		centralPart.push_back(&centralPart_2);
 		centralPart.push_back(&centralPart_1);
+		centralPart.push_back(&centralPart_2);
 	}
 	else {
-		centralPart.push_back(&centralPart_1);
 		centralPart.push_back(&centralPart_2);
+		centralPart.push_back(&centralPart_1);
 	}
 
 	for (int i = index; i < index + sizeCrossOverWindow; i++) {
@@ -408,44 +408,32 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 		int secondParentÑhromosome = mas[abs(1 - numParent)]->path[i];
 
 		if (firstParentÑhromosome != secondParentÑhromosome) {
-			centralPart_1.insert(firstParentÑhromosome);
-			centralPart_2.insert(secondParentÑhromosome);
+			centralPart_1.push_back(firstParentÑhromosome);
+			centralPart_2.push_back(secondParentÑhromosome);
 		}
 
 		pth[i] = mas[abs(1 - numParent)]->path[i];
 	}
 	// óäàëèì ïîâòîğÿşùèåñÿ ıëåìåíòû
-	auto it = centralPart_1.begin();
-	while (it != centralPart_1.end()) {
-		// copy the current iterator then increment it
-		std::set<int>::iterator current = it++;
-
-		int x = *current;
-		auto itF = find(centralPart_2.begin(), centralPart_2.end(), x);
-		if (itF != centralPart_2.end()) {
-			centralPart_2.erase(itF);
-			centralPart_1.erase(current);
+	for (int i = 0; i < centralPart_1.size(); i++) {
+		int elem = centralPart_1[i];
+		int index = BinSearch(centralPart_2,  elem);
+		if (index != -1) {
+			centralPart_2.erase(centralPart_2.begin() + index);
+			centralPart_1.erase(centralPart_1.begin() + i);
+			i--;
 		}
 	}
 	
 	// Ïåğåìåøèâàåì öåíòğàëüíóş ÷àñòü äëÿ äàëüíåéøåé çàìåíû ïîâòîğÿşùèõñÿ ıëåìåíòîâ íà íåâîøåäøèå
-	vector<int> tmp1;
-
-	for (auto it = centralPart_1.begin(); it != centralPart_1.end(); it++)
-		tmp1.push_back(*it);
 
 	for (int i = 0; i < centralPart_1.size() * 10; i++) {
 		int rnd1 = rand() % centralPart_1.size();
 		int rnd2 = rand() % centralPart_1.size();
-		int tmp = tmp1[rnd1];
-		tmp1[rnd1] = tmp1[rnd2];
-		tmp1[rnd2] = tmp;
-	}
 
-	centralPart_1.clear();
-
-	for (int i = 0; i < tmp1.size(); i++) {
-		centralPart_1.insert(tmp1[i]);
+		int tmp = centralPart_1[rnd1];
+		centralPart_1[rnd1] = centralPart_1[rnd2];
+		centralPart_1[rnd2] = tmp;
 	}
 	
 
@@ -454,14 +442,19 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 	for (int i = 0; i < index; i++) {
 		pth[i] = mas[numParent]->path[i];
 
-		auto it = centralPart[numParent]->find(pth[i]);
-
-		if( it != centralPart[numParent]->end() ) {
-			// contains
-			int index = distance(centralPart[numParent]->begin(), it);
-
-			pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
+		int it = BinSearch(*centralPart[abs(1 - numParent)],  pth[i]);
+		if (it != -1) {
+			pth[i] = (*centralPart[numParent])[it];
 		}
+
+		//auto it = centralPart[numParent]->find(pth[i]);
+
+		//if( it != centralPart[numParent]->end() ) {
+		//	// contains
+		//	int index = distance(centralPart[numParent]->begin(), it);
+
+		//	pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
+		//}
 	}
 
 	
@@ -470,15 +463,41 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 	for (int i = index + sizeCrossOverWindow; i < firstParent->path.size(); i++) {
 		pth[i] = mas[numParent]->path[i];
 
-		auto it = centralPart[numParent]->find(pth[i]);
-
-		if (it != centralPart[numParent]->end()) {
-			// contains
-			int index = distance(centralPart[numParent]->begin(), it);
-
-			pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
+		int it = BinSearch(*centralPart[abs(1 - numParent)], pth[i]);
+		if (it != -1) {
+			pth[i] = (*centralPart[numParent])[it];
 		}
+		//auto it = centralPart[numParent]->find(pth[i]);
+
+		//if (it != centralPart[numParent]->end()) {
+		//	// contains
+		//	int index = distance(centralPart[numParent]->begin(), it);
+
+		//	pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
+		//}
 	}
 
-	cout << index << endl;
+	for (int i = 0; i < pth.size(); i++) {
+		cout << pth[i] << " ";
+	}
+	cout << endl;
+}
+
+
+
+
+
+int GA::BinSearch(vector<int>  &arr, int key)
+{
+	int count = arr.size();
+	int l = 0;            // íèæíÿÿ ãğàíèöà
+	int u = count - 1;    // âåğõíÿÿ ãğàíèöà
+
+	while (l <= u) {
+		int m = (l + u) / 2;
+		if (arr[m] == key) return m;
+		if (arr[m] < key) l = m + 1;
+		if (arr[m] > key) u = m - 1;
+	}
+	return -1;
 }

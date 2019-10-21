@@ -44,6 +44,8 @@ public:
 
 	void crossOver(Individ* firstParent, Individ* secondParent);
 
+	int BinSearch(vector<int>  &arr,  int key);
+
 private:
 	// fields
 
