@@ -22,6 +22,7 @@ public:
 	int sizePopulation = 6;
 	int startVertex = 0;
 	int sizeCrossOverWindow = 3;
+	int countSwapInMutation = 2;
 
 	vector<vector<pair<int, int>>> data;
 	int n;
@@ -42,7 +43,8 @@ public:
 
 	void reproduction();
 
-	void crossOver(Individ* firstParent, Individ* secondParent);
+
+	Individ* crossOver(Individ* firstParent, Individ* secondParent);
 
 	int BinSearch(vector<int>  &arr,  int key);
 

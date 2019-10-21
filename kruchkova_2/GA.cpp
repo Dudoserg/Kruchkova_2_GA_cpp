@@ -343,7 +343,16 @@ void GA::reproduction() {
 		indexForReproduction.push_back(std::pair<int, int>(indexFirstParent, indexSecondParent));
 	}
 
-	Individ* first = new Individ();
+	vector<Individ*> newPopulation;
+	for (int i = 0; i < indexForReproduction.size(); i++) {
+		newPopulation.push_back(crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]));
+	}
+	for (int i = 0; i < newPopulation.size(); i++) {
+		delete(population[i]);
+		population[i] = newPopulation[i];
+	}
+
+	/*Individ* first = new Individ();
 	vector<int> firstVector;
 	firstVector.push_back(0);
 	firstVector.push_back(4);
@@ -369,22 +378,23 @@ void GA::reproduction() {
 
 	second->path = secondVector;
 
-	crossOver(first, second);
+	crossOver(first, second);*/
 	
 }
 
-void GA::crossOver(Individ* firstParent, Individ* secondParent)
+// Получаем потомка от двух родителей методом Кросс-Овер
+// потомок составляется из трех частей
+Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 {
 	int index = (rand() % (firstParent->path.size() - sizeCrossOverWindow - 1)) + 1;
 
-	index = 3;
+	//index = 3;
 
-	Individ* result = new Individ;
 	vector<int> pth(firstParent->path.size());
-	result->path = pth;
+
 
 	int numParent = rand() % 2;
-	numParent = 0;
+	//numParent = 0;
 	Individ** mas = new Individ*[2];
 	mas[0] = firstParent; 
 	mas[1] = secondParent;
@@ -414,6 +424,7 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 
 		pth[i] = mas[abs(1 - numParent)]->path[i];
 	}
+
 	// удалим повторяющиеся элементы
 	for (int i = 0; i < centralPart_1.size(); i++) {
 		int elem = centralPart_1[i];
@@ -426,7 +437,6 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 	}
 	
 	// Перемешиваем центральную часть для дальнейшей замены повторяющихся элементов на невошедшие
-
 	for (int i = 0; i < centralPart_1.size() * 10; i++) {
 		int rnd1 = rand() % centralPart_1.size();
 		int rnd2 = rand() % centralPart_1.size();
@@ -436,8 +446,6 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 		centralPart_1[rnd2] = tmp;
 	}
 	
-
-
 	// Копируем первую часть до индекса из нужного родителя
 	for (int i = 0; i < index; i++) {
 		pth[i] = mas[numParent]->path[i];
@@ -447,14 +455,6 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 			pth[i] = (*centralPart[numParent])[it];
 		}
 
-		//auto it = centralPart[numParent]->find(pth[i]);
-
-		//if( it != centralPart[numParent]->end() ) {
-		//	// contains
-		//	int index = distance(centralPart[numParent]->begin(), it);
-
-		//	pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
-		//}
 	}
 
 	
@@ -467,26 +467,21 @@ void GA::crossOver(Individ* firstParent, Individ* secondParent)
 		if (it != -1) {
 			pth[i] = (*centralPart[numParent])[it];
 		}
-		//auto it = centralPart[numParent]->find(pth[i]);
-
-		//if (it != centralPart[numParent]->end()) {
-		//	// contains
-		//	int index = distance(centralPart[numParent]->begin(), it);
-
-		//	pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
-		//}
+	
 	}
 
 	for (int i = 0; i < pth.size(); i++) {
 		cout << pth[i] << " ";
 	}
 	cout << endl;
+
+	Individ* result = new Individ();
+	result->path = pth;
+
+	return result;
 }
 
-
-
-
-
+// Бинарный поиск в массиве
 int GA::BinSearch(vector<int>  &arr, int key)
 {
 	int count = arr.size();
