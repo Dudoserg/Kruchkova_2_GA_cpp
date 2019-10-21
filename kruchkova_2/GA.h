@@ -21,6 +21,7 @@ public:
 	const int INF = 1000000000;
 	int sizePopulation = 6;
 	int startVertex = 0;
+	int sizeCrossOverWindow = 3;
 
 	vector<vector<pair<int, int>>> data;
 	int n;
@@ -40,6 +41,8 @@ public:
 	void calculatePercent();
 
 	void reproduction();
+
+	void crossOver(Individ* firstParent, Individ* secondParent);
 
 private:
 	// fields

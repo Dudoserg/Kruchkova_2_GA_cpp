@@ -5,7 +5,8 @@
 #include <time.h>
 #include <sstream>
 #include <algorithm>
-
+#include <set>  // заголовочный файл множеств и мультимножеств
+#include <iterator>
 
 GA::GA()
 {
@@ -27,6 +28,7 @@ void GA::init()
 	readData();
 	calculateAllPath();
 }
+
 
 // Считываем данные в g
 void GA::readData()
@@ -75,6 +77,7 @@ void GA::readData()
 
 	n = data.size();
 }
+
 
 void GA::calculateAllPath()
 {
@@ -302,33 +305,180 @@ void GA::reproduction() {
 	//for (int i = 0; i < randarr.size(); i++)
 	//	cout << randarr[i] << endl;
 
-	double random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	double sum = 0.0;
+	vector<pair<int, int>> indexForReproduction;
 
-	int indexFirstParent = 0;
-
+	// Генерируем индексы родителей для получения потомства
+	// индексы генерируются в соответсвтии с вероятностью на выживание
+	// чем меньше длина маршрута тем выше индекс выживания
 	for (int i = 0; i < population.size(); i++) {
-		sum += population[i]->percent;
-		if (random < sum) {
-			indexFirstParent = i;
-			break;
-		}		
-	}
-	
-	int indexSecondParent = -1;
-	do {
-		random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		sum = 0.0;
-		
+		double random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		double sum = 0.0;
+
+		int indexFirstParent = 0;
+
 		for (int i = 0; i < population.size(); i++) {
 			sum += population[i]->percent;
 			if (random < sum) {
-				indexSecondParent = i;
+				indexFirstParent = i;
 				break;
 			}
 		}
-	} while (indexSecondParent == indexFirstParent);
 
-	cout << indexFirstParent << " " << indexSecondParent << endl;
+		int indexSecondParent = -1;
+		do {
+			random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+			sum = 0.0;
+
+			for (int i = 0; i < population.size(); i++) {
+				sum += population[i]->percent;
+				if (random < sum) {
+					indexSecondParent = i;
+					break;
+				}
+			}
+		} while (indexSecondParent == indexFirstParent);
+
+		//std::cout << indexFirstParent << " " << indexSecondParent << endl;
+
+		indexForReproduction.push_back(std::pair<int, int>(indexFirstParent, indexSecondParent));
+	}
+
+	Individ* first = new Individ();
+	vector<int> firstVector;
+	firstVector.push_back(0);
+	firstVector.push_back(4);
+	firstVector.push_back(2);
+	firstVector.push_back(1);
+	firstVector.push_back(5);
+	firstVector.push_back(6);
+	firstVector.push_back(3);
+	firstVector.push_back(0);
+
+	first->path = firstVector;
+
+	Individ* second = new Individ();
+	vector<int> secondVector;
+	secondVector.push_back(0);
+	secondVector.push_back(6);
+	secondVector.push_back(4);
+	secondVector.push_back(2);
+	secondVector.push_back(1);
+	secondVector.push_back(3);
+	secondVector.push_back(5);
+	secondVector.push_back(0);
+
+	second->path = secondVector;
+
+	crossOver(first, second);
 	
+}
+
+void GA::crossOver(Individ* firstParent, Individ* secondParent)
+{
+	int index = (rand() % (firstParent->path.size() - sizeCrossOverWindow - 1)) + 1;
+
+	index = 3;
+
+	Individ* result = new Individ;
+	vector<int> pth(firstParent->path.size());
+	result->path = pth;
+
+	int numParent = rand() % 2;
+	numParent = 0;
+	Individ** mas = new Individ*[2];
+	mas[0] = firstParent; 
+	mas[1] = secondParent;
+
+	// Копируем среднюю часть
+	set<int> centralPart_1;
+	set<int> centralPart_2;
+	vector<set<int>*> centralPart;
+
+	if (numParent == 0) {
+		centralPart.push_back(&centralPart_2);
+		centralPart.push_back(&centralPart_1);
+	}
+	else {
+		centralPart.push_back(&centralPart_1);
+		centralPart.push_back(&centralPart_2);
+	}
+
+	for (int i = index; i < index + sizeCrossOverWindow; i++) {
+		int firstParentСhromosome = mas[numParent]->path[i];
+		int secondParentСhromosome = mas[abs(1 - numParent)]->path[i];
+
+		if (firstParentСhromosome != secondParentСhromosome) {
+			centralPart_1.insert(firstParentСhromosome);
+			centralPart_2.insert(secondParentСhromosome);
+		}
+
+		pth[i] = mas[abs(1 - numParent)]->path[i];
+	}
+	// удалим повторяющиеся элементы
+	auto it = centralPart_1.begin();
+	while (it != centralPart_1.end()) {
+		// copy the current iterator then increment it
+		std::set<int>::iterator current = it++;
+
+		int x = *current;
+		auto itF = find(centralPart_2.begin(), centralPart_2.end(), x);
+		if (itF != centralPart_2.end()) {
+			centralPart_2.erase(itF);
+			centralPart_1.erase(current);
+		}
+	}
+	
+	// Перемешиваем центральную часть для дальнейшей замены повторяющихся элементов на невошедшие
+	vector<int> tmp1;
+
+	for (auto it = centralPart_1.begin(); it != centralPart_1.end(); it++)
+		tmp1.push_back(*it);
+
+	for (int i = 0; i < centralPart_1.size() * 10; i++) {
+		int rnd1 = rand() % centralPart_1.size();
+		int rnd2 = rand() % centralPart_1.size();
+		int tmp = tmp1[rnd1];
+		tmp1[rnd1] = tmp1[rnd2];
+		tmp1[rnd2] = tmp;
+	}
+
+	centralPart_1.clear();
+
+	for (int i = 0; i < tmp1.size(); i++) {
+		centralPart_1.insert(tmp1[i]);
+	}
+	
+
+
+	// Копируем первую часть до индекса из нужного родителя
+	for (int i = 0; i < index; i++) {
+		pth[i] = mas[numParent]->path[i];
+
+		auto it = centralPart[numParent]->find(pth[i]);
+
+		if( it != centralPart[numParent]->end() ) {
+			// contains
+			int index = distance(centralPart[numParent]->begin(), it);
+
+			pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
+		}
+	}
+
+	
+
+	// Копируем оставшуюся часть
+	for (int i = index + sizeCrossOverWindow; i < firstParent->path.size(); i++) {
+		pth[i] = mas[numParent]->path[i];
+
+		auto it = centralPart[numParent]->find(pth[i]);
+
+		if (it != centralPart[numParent]->end()) {
+			// contains
+			int index = distance(centralPart[numParent]->begin(), it);
+
+			pth[i] = *std::next(centralPart[abs(1 - numParent)]->begin(), index);
+		}
+	}
+
+	cout << index << endl;
 }
