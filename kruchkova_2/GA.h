@@ -23,6 +23,7 @@ public:
 	int startVertex = 0;
 	int sizeCrossOverWindow = 3;
 	int countSwapInMutation = 2;
+	int minimalFitnes = 9999;
 
 	vector<vector<pair<int, int>>> data;
 	int n;
@@ -48,7 +49,8 @@ public:
 
 	int BinSearch(vector<int>  &arr,  int key);
 
-	void mutation(Individ* individ);
+	void mutation();
+
 
 private:
 	// fields
@@ -68,6 +70,8 @@ private:
 	Individ* createIndividual();
 
 	int fitnessForIndivid(Individ* individ);
+
+	void mutationIndivid(Individ* individ);
 
 	static bool vertexPairCompare(const pair<int, int> &first, const pair<int, int> &second) {
 		return first.first < second.first;

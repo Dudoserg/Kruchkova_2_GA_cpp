@@ -46,6 +46,8 @@ void GA::readData()
 	{
 		while (getline(in, str))
 		{
+			if (str.size() == 0)
+				continue;
 			string tmp;
 			remove_copy(str.begin(), str.end(), back_inserter(tmp), ' ');
 			str = tmp;
@@ -337,7 +339,11 @@ int GA::fitnessForIndivid(Individ * individ)
 			cout << "=========error==========" << endl;
 	}
 
+	if (sum < minimalFitnes)
+		minimalFitnes = sum;
+
 	return sum;
+	
 }
 
 
@@ -406,7 +412,7 @@ void GA::reproduction() {
 		delete(population[i]);
 		population[i] = newPopulation[i];
 	}
-
+	cout << "";
 	/*Individ* first = new Individ();
 	vector<int> firstVector;
 	firstVector.push_back(0);
@@ -563,8 +569,7 @@ int GA::BinSearch(vector<int>  &arr, int key)
 }
 
 
-
-void GA::mutation(Individ * individ)
+void GA::mutationIndivid(Individ* individ)
 {
 	int first = 1 + rand() % (n - 1);
 	int second = 1 + rand() % (n - 1);
@@ -580,3 +585,10 @@ void GA::mutation(Individ * individ)
 	}
 }
 
+
+void GA::mutation()
+{
+	for (int i = 0; i < population.size(); i++) {
+		mutationIndivid(population[i]);
+	}
+}
