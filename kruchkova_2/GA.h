@@ -19,7 +19,7 @@ public:
 
 	// fields
 	const int INF = 1000000000;
-	int sizePopulation = 32;
+	int sizePopulation = 6;
 	int startVertex = 0;
 	int sizeCrossOverWindow = 3;
 	int countSwapInMutation = 2;

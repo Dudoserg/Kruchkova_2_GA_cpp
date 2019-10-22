@@ -11,6 +11,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include<cstdlib> 
+#include<thread>
 GA::GA()
 {
 
@@ -318,6 +320,9 @@ void GA::createFirstPopulation()
 
 void GA::fitness()
 {
+	//const int length = 5;
+	//thread thread_array[length];
+
 	for (int i = 0; i < population.size(); i++) {
 		int x = fitnessForIndivid(population[i]);
 		population[i]->fitness = x;
@@ -620,7 +625,8 @@ void GA::mutationIndivid(Individ* individ)
 
 void GA::mutation()
 {
-	for (int i = population.size() / 2; i < population.size(); i++) {
+	std::sort(population.begin(), population.end(), Individ::testSort);
+	for (int i = 1; i < population.size(); i++) {
 		mutationIndivid(population[i]);
 	}
 }
