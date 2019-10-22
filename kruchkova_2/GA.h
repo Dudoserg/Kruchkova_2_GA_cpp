@@ -48,6 +48,8 @@ public:
 
 	int BinSearch(vector<int>  &arr,  int key);
 
+	void mutation(Individ* individ);
+
 private:
 	// fields
 
@@ -66,6 +68,10 @@ private:
 	Individ* createIndividual();
 
 	int fitnessForIndivid(Individ* individ);
+
+	static bool vertexPairCompare(const pair<int, int> &first, const pair<int, int> &second) {
+		return first.first < second.first;
+	}
 
 
 

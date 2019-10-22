@@ -7,7 +7,9 @@
 #include <algorithm>
 #include <set>  // заголовочный файл множеств и мультимножеств
 #include <iterator>
-
+#include <iostream>
+#include <fstream>
+#include <string>
 GA::GA()
 {
 }
@@ -33,7 +35,71 @@ void GA::init()
 // Считываем данные в g
 void GA::readData()
 {
-	vector<pair<int, int>> zero;
+
+	std::string str;
+
+	vector<vector<int>> readedInfo;
+
+	std::ifstream in("data.txt"); // окрываем файл для чтения
+
+	if (in.is_open())
+	{
+		while (getline(in, str))
+		{
+			string tmp;
+			remove_copy(str.begin(), str.end(), back_inserter(tmp), ' ');
+			str = tmp;
+
+			str.replace(str.find("="), 1, "-");
+
+			vector<string>  result;
+			stringstream  data(str);
+			std::string line;
+			while (std::getline(data, line, '-'))
+			{
+				result.push_back(line);
+			}
+			vector<int> resultNum;
+			for (int i = 0; i < result.size(); i++) {
+				resultNum.push_back(stoi(result[i]));
+			}
+			readedInfo.push_back(resultNum);
+
+			std::cout << str << std::endl;
+		}
+	}
+	in.close();     // закрываем файл
+
+	// считаем количество разных чисел
+	set<int> differentVertex;
+	int countDifferentVertex = -1;
+	for (int i = 0; i < readedInfo.size(); i++) {
+		differentVertex.insert(readedInfo[i][0]);
+		differentVertex.insert(readedInfo[i][1]);
+	}
+	countDifferentVertex = differentVertex.size();
+
+	// инициализируем вектор данных
+	for (int i = 0; i < countDifferentVertex; i++) {
+		vector<pair<int, int>> tmp;
+		data.push_back(tmp);
+	}
+	// заносим данные из прочитанного файла
+	for (int i = 0; i < readedInfo.size(); i++) {
+		int first = readedInfo[i][0];
+		int second = readedInfo[i][1];
+		int weight = readedInfo[i][2];
+
+		pair<int, int> para(second, weight);
+		data[first].push_back(para);
+	}
+
+	// сортируем данные по парам, чтобы у вершины соседнией ей вершины шли в порядке возрастания индекса вершины
+	for (int i = 0; i < data.size(); i++) {
+		sort(data[i].begin(), data[i].end(), GA::vertexPairCompare);
+	}
+
+	/*vector<pair<int, int>> zero;
 	zero.push_back(pair<int, int>(1, 1));
 
 	vector<pair<int, int>> one;
@@ -65,7 +131,7 @@ void GA::readData()
 	data.push_back(three);
 	data.push_back(four);
 	data.push_back(five);
-	data.push_back(six);
+	data.push_back(six);*/
 
 	//g[0] = zero;
 	//g[1] = one;
@@ -332,16 +398,16 @@ void GA::reproduction() {
 		indexForReproduction.push_back(std::pair<int, int>(indexFirstParent, indexSecondParent));
 	}
 
-	/*vector<Individ*> newPopulation;
+	vector<Individ*> newPopulation;
 	for (int i = 0; i < indexForReproduction.size(); i++) {
 		newPopulation.push_back(crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]));
 	}
 	for (int i = 0; i < newPopulation.size(); i++) {
 		delete(population[i]);
 		population[i] = newPopulation[i];
-	}*/
+	}
 
-	Individ* first = new Individ();
+	/*Individ* first = new Individ();
 	vector<int> firstVector;
 	firstVector.push_back(0);
 	firstVector.push_back(3);
@@ -367,7 +433,7 @@ void GA::reproduction() {
 
 	second->path = secondVector;
 
-	crossOver(first, second);
+	crossOver(first, second);*/
 	
 }
 
@@ -407,8 +473,8 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	}*/
 
 	for (int i = index; i < index + sizeCrossOverWindow; i++) {
-		int firstParentСhromosome = mas[numParent]->path[i];
-		int secondParentСhromosome = mas[abs(1 - numParent)]->path[i];
+		int firstParentСhromosome = mas[0]->path[i];
+		int secondParentСhromosome = mas[1]->path[i];
 
 		if (firstParentСhromosome != secondParentСhromosome) {
 			centralPart_1.push_back(firstParentСhromosome);
@@ -433,21 +499,23 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	for (int i = 0; i < centralPart_1.size() * 10; i++) {
 		int rnd1 = rand() % centralPart_1.size();
 		int rnd2 = rand() % centralPart_1.size();
-		// перемешиваем не родительский массив
-		int tmp = (*centralPart[abs(1 - numParent)])[rnd1];
-		(*centralPart[abs(1 - numParent)])[rnd1] = (*centralPart[abs(1 - numParent)])[rnd2];
-		(*centralPart[abs(1 - numParent)])[rnd2] = tmp;
+		// перемешиваем  родительский массив
+		int tmp = (*centralPart[numParent])[rnd1];
+		(*centralPart[numParent])[rnd1] = (*centralPart[numParent])[rnd2];
+		(*centralPart[numParent])[rnd2] = tmp;
 	}
-	// сортируем другой массив
-	sort((*centralPart[numParent]).begin(), (*centralPart[numParent]).end());
+	// сортируем НЕ родительскую середину 
+	sort((*centralPart[abs(1 - numParent)]).begin(), (*centralPart[abs(1 - numParent)]).end());
 	
 	// Копируем первую часть до индекса из нужного родителя
 	for (int i = 0; i < index; i++) {
 		pth[i] = mas[numParent]->path[i];
 
-		int it = BinSearch(*centralPart[numParent],  pth[i]);
+		// ищем в НЕ родительской середине
+		int it = BinSearch(*centralPart[abs(1 - numParent)],  pth[i]);
 		if (it != -1) {
-			pth[i] = (*centralPart[abs(1 - numParent)])[it];
+			// вставляем соответствующий элемент из родительской середины вместо повторяющегося
+			pth[i] = (*centralPart[numParent])[it];
 		}
 
 	}
@@ -458,9 +526,11 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	for (int i = index + sizeCrossOverWindow; i < firstParent->path.size(); i++) {
 		pth[i] = mas[numParent]->path[i];
 
-		int it = BinSearch(*centralPart[numParent], pth[i]);
+		// ищем в НЕ родительской середине
+		int it = BinSearch(*centralPart[abs(1 - numParent)], pth[i]);
 		if (it != -1) {
-			pth[i] = (*centralPart[abs(1 - numParent)])[it];
+			// вставляем соответствующий элемент из родительской середины вместо повторяющегося
+			pth[i] = (*centralPart[numParent])[it];
 		}
 	
 	}
@@ -491,3 +561,22 @@ int GA::BinSearch(vector<int>  &arr, int key)
 	}
 	return -1;
 }
+
+
+
+void GA::mutation(Individ * individ)
+{
+	int first = 1 + rand() % (n - 1);
+	int second = 1 + rand() % (n - 1);
+	for (int i = 0; i < countSwapInMutation; i++) {
+		// Меняем два элемента местами
+		int tmp = individ->path[first];
+		individ->path[first] = individ->path[second];
+		individ->path[second] = tmp;
+		
+		// Дальше будем менять только что поменянный элемент с новым, чтобы за раз новое место получал один элемент а не 2
+		first = second;
+		second = 1 + rand() % (n - 1);
+	}
+}
+
