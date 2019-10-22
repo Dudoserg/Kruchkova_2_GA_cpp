@@ -1,6 +1,6 @@
 #pragma once
-#define DEBUG
 
+#include "DUDOS.h"
 #include <iostream>
 #include <vector>
 #include "Individ.h"
@@ -24,6 +24,8 @@ public:
 	int sizeCrossOverWindow = 3;
 	int countSwapInMutation = 2;
 	int minimalFitnes = 9999;
+	int minimalFitnesIndex = 9999;
+	int indexIteration = 0;
 
 	vector<vector<pair<int, int>>> data;
 	int n;
@@ -53,6 +55,7 @@ public:
 
 	void killWeakIndivid();
 
+	void printPopulation();
 
 private:
 	// fields

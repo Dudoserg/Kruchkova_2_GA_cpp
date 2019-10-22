@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "GA.h"
 #include "Individ.h"
 #include "Path.h"
@@ -12,6 +13,8 @@
 #include <string>
 GA::GA()
 {
+
+
 }
 
 
@@ -66,8 +69,9 @@ void GA::readData()
 				resultNum.push_back(stoi(result[i]));
 			}
 			readedInfo.push_back(resultNum);
-
+			#ifdef DEBUG
 			std::cout << str << std::endl;
+			#endif
 		}
 	}
 	in.close();     // закрываем файл
@@ -339,8 +343,12 @@ int GA::fitnessForIndivid(Individ * individ)
 			cout << "=========error==========" << endl;
 	}
 
-	if (sum < minimalFitnes)
+	
+
+	if (sum < minimalFitnes) {
 		minimalFitnes = sum;
+		
+	}
 
 	return sum;
 	
@@ -365,7 +373,7 @@ void GA::calculatePercent() {
 
 
 void GA::reproduction() {
-
+	indexIteration++;
 	vector<pair<int, int>> indexForReproduction;
 
 	// √енерируем индексы родителей дл€ получени€ потомства
@@ -451,15 +459,15 @@ void GA::reproduction() {
 Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 {
 	int index = (rand() % (firstParent->path.size() - sizeCrossOverWindow - 1)) + 1;
-
-	index = 2;
+	//index = 2;
 
 	vector<int> pth(firstParent->path.size());
 	for (int i = 0; i < pth.size(); i++)
 		pth[i] = INT_MIN;
 
 	int numParent = rand() % 2;
-	numParent = 1;
+	//numParent = 1;
+
 	Individ** mas = new Individ*[2];
 	mas[0] = firstParent; 
 	mas[1] = secondParent;
@@ -495,8 +503,10 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 
 	// удалим повтор€ющиес€ элементы
 	for (int i = 0; i < centralPart_1.size(); i++) {
+
 		int elem = centralPart_1[i];
 		int index = BinSearch(centralPart_2,  elem);
+
 		if (index != -1) {
 			centralPart_2.erase(centralPart_2.begin() + index);
 			centralPart_1.erase(centralPart_1.begin() + i);
@@ -543,12 +553,12 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 		}
 	
 	}
-
+#ifdef DEBUG
 	for (int i = 0; i < pth.size(); i++) {
 		cout << pth[i] << " ";
 	}
 	cout << endl;
-
+#endif
 	Individ* result = new Individ();
 	result->path = pth;
 
@@ -569,6 +579,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 // Ѕинарный поиск в массиве
 int GA::BinSearch(vector<int>  &arr, int key)
 {
+	/*
 	int count = arr.size();
 	int l = 0;            // нижн€€ граница
 	int u = count - 1;    // верхн€€ граница
@@ -578,6 +589,13 @@ int GA::BinSearch(vector<int>  &arr, int key)
 		if (arr[m] == key) return m;
 		if (arr[m] < key) l = m + 1;
 		if (arr[m] > key) u = m - 1;
+	}
+	return -1;
+	*/
+
+	for (int i = 0; i < arr.size(); i++) {
+		if (arr[i] == key)
+			return i;
 	}
 	return -1;
 }
@@ -602,7 +620,7 @@ void GA::mutationIndivid(Individ* individ)
 
 void GA::mutation()
 {
-	for (int i = 0; i < population.size(); i++) {
+	for (int i = population.size() / 2; i < population.size(); i++) {
 		mutationIndivid(population[i]);
 	}
 }
@@ -613,4 +631,15 @@ void GA::killWeakIndivid()
 	while (population.size() != sizePopulation) {
 		population.erase(population.begin() + population.size() - 1);
 	}
+}
+
+void GA::printPopulation()
+{
+	cout << endl << endl;
+	for (int i = 0; i < population.size(); i++) {
+		for (int j = 0; j < population[i]->path.size(); j++)
+			cout << population[i]->path[j] << " ";
+		cout << "\tfitness = " << population[i]->fitness << endl;
+	}
+	cout << endl << endl;
 }

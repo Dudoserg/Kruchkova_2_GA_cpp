@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DUDOS.h" />
     <ClInclude Include="Individ.h" />
     <ClInclude Include="kruchkova_2.h" />
     <ClInclude Include="GA.h" />
