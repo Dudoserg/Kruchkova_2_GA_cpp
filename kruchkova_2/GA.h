@@ -24,8 +24,8 @@ public:
 	int sizeCrossOverWindow = 3;
 	int countSwapInMutation = 2;
 	int minimalFitnes = 9999;
-	int minimalFitnesIndex = 9999;
-	int indexIteration = 0;
+	int minimalFitnesIteration = 9999;
+	int iterationNum = 0;
 
 	vector<vector<pair<int, int>>> data;
 	int n;

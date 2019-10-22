@@ -347,7 +347,7 @@ int GA::fitnessForIndivid(Individ * individ)
 
 	if (sum < minimalFitnes) {
 		minimalFitnes = sum;
-		
+		minimalFitnesIteration = iterationNum;
 	}
 
 	return sum;
@@ -373,7 +373,7 @@ void GA::calculatePercent() {
 
 
 void GA::reproduction() {
-	indexIteration++;
+	iterationNum++;
 	vector<pair<int, int>> indexForReproduction;
 
 	// Генерируем индексы родителей для получения потомства
