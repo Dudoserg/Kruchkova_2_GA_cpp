@@ -51,6 +51,8 @@ public:
 
 	void mutation();
 
+	void killWeakIndivid();
+
 
 private:
 	// fields
