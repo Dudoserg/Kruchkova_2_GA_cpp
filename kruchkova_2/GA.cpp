@@ -435,8 +435,7 @@ void GA::calculatePercent() {
 
 void GA::reproduction() {
 
-
-
+	#if THREAD_REPRODUCTION == 1
 	// √енерируем индексы родителей дл€ получени€ потомства
 	// индексы генерируютс€ в соответсвтии с веро€тностью на выживание
 	// чем меньше длина маршрута тем выше индекс выживани€
@@ -526,15 +525,23 @@ void GA::reproduction() {
 	}
 	// теперь можем двигатьс€ дальше
 	
+	// копируем новых потомков в основную попул€цию
 	for (int i = 0; i < newPopulation.size(); i++) {
 		population.push_back(newPopulation[i]);
 	}
+	// чистим новых потомков
+	newPopulation.clear();
+
 
 
 	/*for (int i = 0; i < indexForReproduction.size(); i++) {
 		newPopulation.push_back(crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]));
 	}
 	*/
+	#endif // THREAD_REPRODUCTION == 1
+
+	#if THREAD_REPRODUCTION == 0
+	#endif // THREAD_REPRODUCTION == 0
 
 	
 }
