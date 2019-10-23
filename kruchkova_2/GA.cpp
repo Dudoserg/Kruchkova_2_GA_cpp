@@ -325,32 +325,32 @@ void GA::fitness()
 
 	vector<pair<int, int>> indexForThread;
 
+	// рассчитываем сколько задач каждый поток должен выполнить
+	int countIndividInThread = population.size() / THREAD_FITNESS_COUNT;
+	int countFreeTask = population.size();
+
+	vector<int> countTaskForThread(THREAD_FITNESS_COUNT);
+	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
+		countTaskForThread[i] += countIndividInThread;
+		countFreeTask -= countIndividInThread;
+	}
+	for (int i = 0; i < THREAD_FITNESS_COUNT && countFreeTask != 0; i++) {
+		countTaskForThread[i]++;
+		countFreeTask--;
+	}
 	// рассчитываем индексы индивидов в популяции, которые будут вычислятьяс в потоках
 	// индексы зависят от количества потоков
-	int countIndividInThread = population.size() / threadFitnessCount;
-	int tmp = 0;
-	while (true)
-	{
-		int first = tmp;
-
-		tmp += countIndividInThread;
-
-		int second = tmp;
-
-		if (second >= population.size()) {
-
-			second = population.size();
-			indexForThread.push_back(pair<int, int>(first, second));
-			break;
-		}
-		indexForThread.push_back(pair<int, int>(first, second));
-
+	int sum = 0;
+	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
+		sum += countTaskForThread[i];
+		indexForThread.push_back(pair<int, int>(sum - countTaskForThread[i], sum));
 	}
+	////////////////////////////////////////////////////////
 
 	// массив потоков
-	vector<thread> thread_array(threadFitnessCount);
+	vector<thread> thread_array(THREAD_FITNESS_COUNT);
 	// создаем и запускаем потоки
-	for (int i = 0; i < threadFitnessCount; i++) {
+	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
 		// используем лябду функцию
 		thread_array[i] = thread(
 			[&](int startIndex, int secondIndex)
@@ -363,7 +363,7 @@ void GA::fitness()
 			);
 	}
 	// ждем остановки потоков
-	for (int i = 0; i < threadFitnessCount; i++) {
+	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
 		if (thread_array[i].joinable()) {
 			thread_array[i].join();
 		}
@@ -379,11 +379,6 @@ void GA::fitness()
 	}
 	cout << "";
 #endif // THREAD_FITNESS_OFF
-
-
-
-
-
 }
 
 //void  GA::startFitness(int startIndex, int secondIndex) {
@@ -410,8 +405,6 @@ int GA::fitnessForIndivid(Individ * individ)
 		else
 			cout << "=========error==========" << endl;
 	}
-
-
 
 	if (sum < minimalFitnes) {
 		minimalFitnes = sum;
@@ -442,12 +435,13 @@ void GA::calculatePercent() {
 
 void GA::reproduction() {
 
-	iterationNum++;
-	vector<pair<int, int>> indexForReproduction;
+
 
 	// Генерируем индексы родителей для получения потомства
 	// индексы генерируются в соответсвтии с вероятностью на выживание
 	// чем меньше длина маршрута тем выше индекс выживания
+	iterationNum++;
+	vector<pair<int, int>> indexForReproduction;
 	for (int i = 0; i < population.size(); i++) {
 		double random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		double sum = 0.0;
@@ -480,47 +474,69 @@ void GA::reproduction() {
 
 		indexForReproduction.push_back(std::pair<int, int>(indexFirstParent, indexSecondParent));
 	}
+	////////////////////////////////////////////
 
-	vector<Individ*> newPopulation;
-	for (int i = 0; i < indexForReproduction.size(); i++) {
-		newPopulation.push_back(crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]));
+	vector<pair<int, int>> indexForThread;
+
+	// рассчитываем сколько задач каждый поток должен выполнить
+	int countIndividInThread = population.size() / THREAD_REPRODUCTION_COUNT;
+	int countFreeTask = population.size();
+
+	vector<int> countTaskForThread(THREAD_REPRODUCTION_COUNT);
+	for (int i = 0; i < THREAD_REPRODUCTION_COUNT; i++) {
+		countTaskForThread[i] += countIndividInThread;
+		countFreeTask -= countIndividInThread;
+	}
+	for (int i = 0; i < THREAD_REPRODUCTION_COUNT && countFreeTask != 0; i++) {
+		countTaskForThread[i]++;
+		countFreeTask--;
+	}
+	// рассчитываем индексы индивидов в популяции, которые будут вычислятьяс в потоках
+	// индексы зависят от количества потоков
+	int sum = 0;
+	for (int i = 0; i < THREAD_REPRODUCTION_COUNT; i++) {
+		sum += countTaskForThread[i];
+		indexForThread.push_back(pair<int, int>(sum - countTaskForThread[i], sum));
 	}
 
+	// массив потоков
+	vector<thread> thread_array(THREAD_FITNESS_COUNT);
 
+	// создаем и запускаем потоки
+
+	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
+		// используем лябду функцию
+		thread_array[i] = thread(
+			[&](int startIndex, int secondIndex, vector<pair<int, int>> indexForReproduction)
+		{
+			for (int i = startIndex; i < secondIndex; i++) {
+				int x = 4;
+				Individ * tmpIndivid = crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]);
+
+				newPopulation.push_back(tmpIndivid);
+			}
+		}, indexForThread[i].first, indexForThread[i].second, indexForReproduction
+			);
+	}
+	// ждем остановки потоков
+	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
+		if (thread_array[i].joinable()) {
+			thread_array[i].join();
+		}
+	}
+	// теперь можем двигаться дальше
+	
 	for (int i = 0; i < newPopulation.size(); i++) {
-		//delete(population[i]);
 		population.push_back(newPopulation[i]);
 	}
 
-	cout << "";
-	/*Individ* first = new Individ();
-	vector<int> firstVector;
-	firstVector.push_back(0);
-	firstVector.push_back(3);
-	firstVector.push_back(2);
-	firstVector.push_back(6);
-	firstVector.push_back(1);
-	firstVector.push_back(4);
-	firstVector.push_back(5);
-	firstVector.push_back(0);
 
-	first->path = firstVector;
+	/*for (int i = 0; i < indexForReproduction.size(); i++) {
+		newPopulation.push_back(crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]));
+	}
+	*/
 
-	Individ* second = new Individ();
-	vector<int> secondVector;
-	secondVector.push_back(0);
-	secondVector.push_back(2);
-	secondVector.push_back(5);
-	secondVector.push_back(4);
-	secondVector.push_back(6);
-	secondVector.push_back(3);
-	secondVector.push_back(1);
-	secondVector.push_back(0);
-
-	second->path = secondVector;
-
-	crossOver(first, second);*/
-
+	
 }
 
 // Получаем потомка от двух родителей методом Кросс-Овер

@@ -18,15 +18,24 @@ public:
 	~GA();
 
 	// fields
+
+	//  оличество потоков в вычислении  FITNESS
+	const int THREAD_FITNESS_COUNT = 4;
+
+
+	//  оличество потоков в вычислении REPRODUCTION
+	const int THREAD_REPRODUCTION_COUNT = 4;
+
 	static const int INF = 1000000000;
 	// размер окна в кроссовере
 	static const int sizeCrossOverWindow = 3;
 	// количество мутаций 
 	static const int countSwapInMutation = 2;
-	//  оличество потоков в вычислении  FITNESS
-	const int threadFitnessCount = 4;
 
-	int sizePopulation = 100;
+
+	vector<Individ*> newPopulation;
+
+	int sizePopulation = 6;
 	int startVertex = 0;
 
 	int minimalFitnes = 9999;
