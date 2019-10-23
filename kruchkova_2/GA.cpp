@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 
 #include "GA.h"
 #include "Individ.h"
@@ -6,7 +6,7 @@
 #include <time.h>
 #include <sstream>
 #include <algorithm>
-#include <set>  // заголовочный файл множеств и мультимножеств
+#include <set>  // Р·Р°РіРѕР»РѕРІРѕС‡РЅС‹Р№ С„Р°Р№Р» РјРЅРѕР¶РµСЃС‚РІ Рё РјСѓР»СЊС‚РёРјРЅРѕР¶РµСЃС‚РІ
 #include <iterator>
 #include <iostream>
 #include <fstream>
@@ -37,7 +37,7 @@ void GA::init()
 }
 
 
-// Считываем данные в g
+// РЎС‡РёС‚С‹РІР°РµРј РґР°РЅРЅС‹Рµ РІ g
 void GA::readData()
 {
 
@@ -45,7 +45,7 @@ void GA::readData()
 
 	vector<vector<int>> readedInfo;
 
-	std::ifstream in("data.txt"); // окрываем файл для чтения
+	std::ifstream in("data.txt"); // РѕРєСЂС‹РІР°РµРј С„Р°Р№Р» РґР»СЏ С‡С‚РµРЅРёСЏ
 
 	if (in.is_open())
 	{
@@ -76,9 +76,9 @@ void GA::readData()
 #endif
 		}
 	}
-	in.close();     // закрываем файл
+	in.close();     // Р·Р°РєСЂС‹РІР°РµРј С„Р°Р№Р»
 
-	// считаем количество разных чисел
+	// СЃС‡РёС‚Р°РµРј РєРѕР»РёС‡РµСЃС‚РІРѕ СЂР°Р·РЅС‹С… С‡РёСЃРµР»
 	set<int> differentVertex;
 	int countDifferentVertex = -1;
 	for (int i = 0; i < readedInfo.size(); i++) {
@@ -87,12 +87,12 @@ void GA::readData()
 	}
 	countDifferentVertex = differentVertex.size();
 
-	// инициализируем вектор данных
+	// РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РІРµРєС‚РѕСЂ РґР°РЅРЅС‹С…
 	for (int i = 0; i < countDifferentVertex; i++) {
 		vector<pair<int, int>> tmp;
 		data.push_back(tmp);
 	}
-	// заносим данные из прочитанного файла
+	// Р·Р°РЅРѕСЃРёРј РґР°РЅРЅС‹Рµ РёР· РїСЂРѕС‡РёС‚Р°РЅРЅРѕРіРѕ С„Р°Р№Р»Р°
 	for (int i = 0; i < readedInfo.size(); i++) {
 		int first = readedInfo[i][0];
 		int second = readedInfo[i][1];
@@ -102,7 +102,7 @@ void GA::readData()
 		data[first].push_back(para);
 	}
 
-	// сортируем данные по парам, чтобы у вершины соседнией ей вершины шли в порядке возрастания индекса вершины
+	// СЃРѕСЂС‚РёСЂСѓРµРј РґР°РЅРЅС‹Рµ РїРѕ РїР°СЂР°Рј, С‡С‚РѕР±С‹ Сѓ РІРµСЂС€РёРЅС‹ СЃРѕСЃРµРґРЅРёРµР№ РµР№ РІРµСЂС€РёРЅС‹ С€Р»Рё РІ РїРѕСЂСЏРґРєРµ РІРѕР·СЂР°СЃС‚Р°РЅРёСЏ РёРЅРґРµРєСЃР° РІРµСЂС€РёРЅС‹
 	for (int i = 0; i < data.size(); i++) {
 		sort(data[i].begin(), data[i].end(), GA::vertexPairCompare);
 	}
@@ -160,7 +160,7 @@ void GA::calculateAllPath()
 }
 
 
-// генерируем особь
+// РіРµРЅРµСЂРёСЂСѓРµРј РѕСЃРѕР±СЊ
 Individ * GA::createIndividual()
 {
 	//int *currentPopulation = new int[n + 1];
@@ -170,7 +170,7 @@ Individ * GA::createIndividual()
 	for (int i = 0; i < n; i++) {
 		currentPopulation[i] = i;
 	}
-	// на первое место нужно поставить стартовую вершину, и потом ее не трогать, при перемешивании
+	// РЅР° РїРµСЂРІРѕРµ РјРµСЃС‚Рѕ РЅСѓР¶РЅРѕ РїРѕСЃС‚Р°РІРёС‚СЊ СЃС‚Р°СЂС‚РѕРІСѓСЋ РІРµСЂС€РёРЅСѓ, Рё РїРѕС‚РѕРј РµРµ РЅРµ С‚СЂРѕРіР°С‚СЊ, РїСЂРё РїРµСЂРµРјРµС€РёРІР°РЅРёРё
 
 	for (int i = 0; i < n; i++) {
 		if (currentPopulation[i] == startVertex) {
@@ -180,7 +180,7 @@ Individ * GA::createIndividual()
 		}
 	}
 
-	// В конце должны вернуться в стартовую вершину, и потом ее не трогать, при перемешивании
+	// Р’ РєРѕРЅС†Рµ РґРѕР»Р¶РЅС‹ РІРµСЂРЅСѓС‚СЊСЃСЏ РІ СЃС‚Р°СЂС‚РѕРІСѓСЋ РІРµСЂС€РёРЅСѓ, Рё РїРѕС‚РѕРј РµРµ РЅРµ С‚СЂРѕРіР°С‚СЊ, РїСЂРё РїРµСЂРµРјРµС€РёРІР°РЅРёРё
 	currentPopulation[n] = startVertex;
 
 	int firstRand = 0;
@@ -206,7 +206,7 @@ Individ * GA::createIndividual()
 }
 
 
-// Ищем путь от вершины До всех остальных
+// РС‰РµРј РїСѓС‚СЊ РѕС‚ РІРµСЂС€РёРЅС‹ Р”Рѕ РІСЃРµС… РѕСЃС‚Р°Р»СЊРЅС‹С…
 void GA::calculatePathFromVertexToAll(int startVertex)
 {
 	int s = startVertex;
@@ -232,7 +232,7 @@ void GA::calculatePathFromVertexToAll(int startVertex)
 		}
 	}
 
-	// сохраняем путь
+	// СЃРѕС…СЂР°РЅСЏРµРј РїСѓС‚СЊ
 	vector<Path*> pathFromTo;
 
 	for (int t = 0; t < data.size(); t++) {
@@ -260,13 +260,13 @@ void GA::calculatePathFromVertexToAll(int startVertex)
 
 		//pathFromTo.push_back(path);
 
-		// устанавливаем маршрут в текущий путь
+		// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РјР°СЂС€СЂСѓС‚ РІ С‚РµРєСѓС‰РёР№ РїСѓС‚СЊ
 		currPath->path = path;
 
-		// Вычисляем длину пути
+		// Р’С‹С‡РёСЃР»СЏРµРј РґР»РёРЅСѓ РїСѓС‚Рё
 		currPath->weight = calculateWeightPath(currPath);
 
-		// Сохраняем путь в глобальный массив
+		// РЎРѕС…СЂР°РЅСЏРµРј РїСѓС‚СЊ РІ РіР»РѕР±Р°Р»СЊРЅС‹Р№ РјР°СЃСЃРёРІ
 		pathFromTo.push_back(currPath);
 	}
 #ifdef DEBUG_ON
@@ -276,7 +276,7 @@ void GA::calculatePathFromVertexToAll(int startVertex)
 	this->paths.push_back(pathFromTo);
 }
 
-// Расчет длины пути
+// Р Р°СЃС‡РµС‚ РґР»РёРЅС‹ РїСѓС‚Рё
 int GA::calculateWeightPath(Path * currPath)
 {
 	int sum = 0;
@@ -325,7 +325,7 @@ void GA::fitness()
 
 	vector<pair<int, int>> indexForThread;
 
-	// рассчитываем сколько задач каждый поток должен выполнить
+	// СЂР°СЃСЃС‡РёС‚С‹РІР°РµРј СЃРєРѕР»СЊРєРѕ Р·Р°РґР°С‡ РєР°Р¶РґС‹Р№ РїРѕС‚РѕРє РґРѕР»Р¶РµРЅ РІС‹РїРѕР»РЅРёС‚СЊ
 	int countIndividInThread = population.size() / THREAD_FITNESS_COUNT;
 	int countFreeTask = population.size();
 
@@ -338,8 +338,8 @@ void GA::fitness()
 		countTaskForThread[i]++;
 		countFreeTask--;
 	}
-	// рассчитываем индексы индивидов в популяции, которые будут вычислятьяс в потоках
-	// индексы зависят от количества потоков
+	// СЂР°СЃСЃС‡РёС‚С‹РІР°РµРј РёРЅРґРµРєСЃС‹ РёРЅРґРёРІРёРґРѕРІ РІ РїРѕРїСѓР»СЏС†РёРё, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РІС‹С‡РёСЃР»СЏС‚СЊСЏСЃ РІ РїРѕС‚РѕРєР°С…
+	// РёРЅРґРµРєСЃС‹ Р·Р°РІРёСЃСЏС‚ РѕС‚ РєРѕР»РёС‡РµСЃС‚РІР° РїРѕС‚РѕРєРѕРІ
 	int sum = 0;
 	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
 		sum += countTaskForThread[i];
@@ -347,11 +347,11 @@ void GA::fitness()
 	}
 	////////////////////////////////////////////////////////
 
-	// массив потоков
+	// РјР°СЃСЃРёРІ РїРѕС‚РѕРєРѕРІ
 	vector<thread> thread_array(THREAD_FITNESS_COUNT);
-	// создаем и запускаем потоки
+	// СЃРѕР·РґР°РµРј Рё Р·Р°РїСѓСЃРєР°РµРј РїРѕС‚РѕРєРё
 	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
-		// используем лябду функцию
+		// РёСЃРїРѕР»СЊР·СѓРµРј Р»СЏР±РґСѓ С„СѓРЅРєС†РёСЋ
 		thread_array[i] = thread(
 			[&](int startIndex, int secondIndex)
 		{
@@ -362,13 +362,13 @@ void GA::fitness()
 		}, indexForThread[i].first, indexForThread[i].second
 			);
 	}
-	// ждем остановки потоков
+	// Р¶РґРµРј РѕСЃС‚Р°РЅРѕРІРєРё РїРѕС‚РѕРєРѕРІ
 	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
 		if (thread_array[i].joinable()) {
 			thread_array[i].join();
 		}
 	}
-	// теперь можем двигаться дальше
+	// С‚РµРїРµСЂСЊ РјРѕР¶РµРј РґРІРёРіР°С‚СЊСЃСЏ РґР°Р»СЊС€Рµ
 	cout << "";
 #endif // THREAD_FITNESS_ON
 
@@ -436,9 +436,9 @@ void GA::calculatePercent() {
 void GA::reproduction() {
 
 	#if THREAD_REPRODUCTION == 1
-	// Генерируем индексы родителей для получения потомства
-	// индексы генерируются в соответсвтии с вероятностью на выживание
-	// чем меньше длина маршрута тем выше индекс выживания
+	// Р“РµРЅРµСЂРёСЂСѓРµРј РёРЅРґРµРєСЃС‹ СЂРѕРґРёС‚РµР»РµР№ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РїРѕС‚РѕРјСЃС‚РІР°
+	// РёРЅРґРµРєСЃС‹ РіРµРЅРµСЂРёСЂСѓСЋС‚СЃСЏ РІ СЃРѕРѕС‚РІРµС‚СЃРІС‚РёРё СЃ РІРµСЂРѕСЏС‚РЅРѕСЃС‚СЊСЋ РЅР° РІС‹Р¶РёРІР°РЅРёРµ
+	// С‡РµРј РјРµРЅСЊС€Рµ РґР»РёРЅР° РјР°СЂС€СЂСѓС‚Р° С‚РµРј РІС‹С€Рµ РёРЅРґРµРєСЃ РІС‹Р¶РёРІР°РЅРёСЏ
 	iterationNum++;
 	vector<pair<int, int>> indexForReproduction;
 	for (int i = 0; i < population.size(); i++) {
@@ -477,7 +477,7 @@ void GA::reproduction() {
 
 	vector<pair<int, int>> indexForThread;
 
-	// рассчитываем сколько задач каждый поток должен выполнить
+	// СЂР°СЃСЃС‡РёС‚С‹РІР°РµРј СЃРєРѕР»СЊРєРѕ Р·Р°РґР°С‡ РєР°Р¶РґС‹Р№ РїРѕС‚РѕРє РґРѕР»Р¶РµРЅ РІС‹РїРѕР»РЅРёС‚СЊ
 	int countIndividInThread = population.size() / THREAD_REPRODUCTION_COUNT;
 	int countFreeTask = population.size();
 
@@ -490,21 +490,21 @@ void GA::reproduction() {
 		countTaskForThread[i]++;
 		countFreeTask--;
 	}
-	// рассчитываем индексы индивидов в популяции, которые будут вычислятьяс в потоках
-	// индексы зависят от количества потоков
+	// СЂР°СЃСЃС‡РёС‚С‹РІР°РµРј РёРЅРґРµРєСЃС‹ РёРЅРґРёРІРёРґРѕРІ РІ РїРѕРїСѓР»СЏС†РёРё, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РІС‹С‡РёСЃР»СЏС‚СЊСЏСЃ РІ РїРѕС‚РѕРєР°С…
+	// РёРЅРґРµРєСЃС‹ Р·Р°РІРёСЃСЏС‚ РѕС‚ РєРѕР»РёС‡РµСЃС‚РІР° РїРѕС‚РѕРєРѕРІ
 	int sum = 0;
 	for (int i = 0; i < THREAD_REPRODUCTION_COUNT; i++) {
 		sum += countTaskForThread[i];
 		indexForThread.push_back(pair<int, int>(sum - countTaskForThread[i], sum));
 	}
 
-	// массив потоков
+	// РјР°СЃСЃРёРІ РїРѕС‚РѕРєРѕРІ
 	vector<thread> thread_array(THREAD_FITNESS_COUNT);
 
-	// создаем и запускаем потоки
+	// СЃРѕР·РґР°РµРј Рё Р·Р°РїСѓСЃРєР°РµРј РїРѕС‚РѕРєРё
 
 	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
-		// используем лябду функцию
+		// РёСЃРїРѕР»СЊР·СѓРµРј Р»СЏР±РґСѓ С„СѓРЅРєС†РёСЋ
 		thread_array[i] = thread(
 			[&](int startIndex, int secondIndex, vector<pair<int, int>> indexForReproduction)
 		{
@@ -517,19 +517,19 @@ void GA::reproduction() {
 		}, indexForThread[i].first, indexForThread[i].second, indexForReproduction
 			);
 	}
-	// ждем остановки потоков
+	// Р¶РґРµРј РѕСЃС‚Р°РЅРѕРІРєРё РїРѕС‚РѕРєРѕРІ
 	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
 		if (thread_array[i].joinable()) {
 			thread_array[i].join();
 		}
 	}
-	// теперь можем двигаться дальше
+	// С‚РµРїРµСЂСЊ РјРѕР¶РµРј РґРІРёРіР°С‚СЊСЃСЏ РґР°Р»СЊС€Рµ
 	
-	// копируем новых потомков в основную популяцию
+	// РєРѕРїРёСЂСѓРµРј РЅРѕРІС‹С… РїРѕС‚РѕРјРєРѕРІ РІ РѕСЃРЅРѕРІРЅСѓСЋ РїРѕРїСѓР»СЏС†РёСЋ
 	for (int i = 0; i < newPopulation.size(); i++) {
 		population.push_back(newPopulation[i]);
 	}
-	// чистим новых потомков
+	// С‡РёСЃС‚РёРј РЅРѕРІС‹С… РїРѕС‚РѕРјРєРѕРІ
 	newPopulation.clear();
 
 
@@ -541,13 +541,64 @@ void GA::reproduction() {
 	#endif // THREAD_REPRODUCTION == 1
 
 	#if THREAD_REPRODUCTION == 0
+
+	iterationNum++;
+	vector<pair<int, int>> indexForReproduction;
+
+	// ГѓГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬ ГЁГ­Г¤ГҐГЄГ±Г» Г°Г®Г¤ГЁГІГҐГ«ГҐГ© Г¤Г«Гї ГЇГ®Г«ГіГ·ГҐГ­ГЁГї ГЇГ®ГІГ®Г¬Г±ГІГўГ 
+	// ГЁГ­Г¤ГҐГЄГ±Г» ГЈГҐГ­ГҐГ°ГЁГ°ГіГѕГІГ±Гї Гў Г±Г®Г®ГІГўГҐГІГ±ГўГІГЁГЁ Г± ГўГҐГ°Г®ГїГІГ­Г®Г±ГІГјГѕ Г­Г  ГўГ»Г¦ГЁГўГ Г­ГЁГҐ
+	// Г·ГҐГ¬ Г¬ГҐГ­ГјГёГҐ Г¤Г«ГЁГ­Г  Г¬Г Г°ГёГ°ГіГІГ  ГІГҐГ¬ ГўГ»ГёГҐ ГЁГ­Г¤ГҐГЄГ± ГўГ»Г¦ГЁГўГ Г­ГЁГї
+	for (int i = 0; i < population.size(); i++) {
+		double random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		double sum = 0.0;
+
+		int indexFirstParent = 0;
+
+		for (int i = 0; i < population.size(); i++) {
+			sum += population[i]->percent;
+			if (random < sum) {
+				indexFirstParent = i;
+				break;
+			}
+		}
+
+		int indexSecondParent = -1;
+		do {
+			random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+			sum = 0.0;
+
+			for (int i = 0; i < population.size(); i++) {
+				sum += population[i]->percent;
+				if (random < sum) {
+					indexSecondParent = i;
+					break;
+				}
+			}
+		} while (indexSecondParent == indexFirstParent);
+
+		//std::cout << indexFirstParent << " " << indexSecondParent << endl;
+
+		indexForReproduction.push_back(std::pair<int, int>(indexFirstParent, indexSecondParent));
+	}
+
+	vector<Individ*> newPopulation;
+	for (int i = 0; i < indexForReproduction.size(); i++) {
+		newPopulation.push_back(crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]));
+	}
+
+
+	for (int i = 0; i < newPopulation.size(); i++) {
+		//delete(population[i]);
+		population.push_back(newPopulation[i]);
+	}
+
 	#endif // THREAD_REPRODUCTION == 0
 
 	
 }
 
-// Получаем потомка от двух родителей методом Кросс-Овер
-// потомок составляется из трех частей
+// РџРѕР»СѓС‡Р°РµРј РїРѕС‚РѕРјРєР° РѕС‚ РґРІСѓС… СЂРѕРґРёС‚РµР»РµР№ РјРµС‚РѕРґРѕРј РљСЂРѕСЃСЃ-РћРІРµСЂ
+// РїРѕС‚РѕРјРѕРє СЃРѕСЃС‚Р°РІР»СЏРµС‚СЃСЏ РёР· С‚СЂРµС… С‡Р°СЃС‚РµР№
 Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 {
 	int index = (rand() % (firstParent->path.size() - sizeCrossOverWindow - 1)) + 1;
@@ -564,7 +615,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	mas[0] = firstParent;
 	mas[1] = secondParent;
 
-	// Копируем среднюю часть
+	// РљРѕРїРёСЂСѓРµРј СЃСЂРµРґРЅСЋСЋ С‡Р°СЃС‚СЊ
 	vector<int> centralPart_1;
 	vector<int> centralPart_2;
 	vector<vector<int>*> centralPart;
@@ -582,18 +633,18 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	}*/
 
 	for (int i = index; i < index + sizeCrossOverWindow; i++) {
-		int firstParentСhromosome = mas[0]->path[i];
-		int secondParentСhromosome = mas[1]->path[i];
+		int firstParentРЎhromosome = mas[0]->path[i];
+		int secondParentРЎhromosome = mas[1]->path[i];
 
-		if (firstParentСhromosome != secondParentСhromosome) {
-			centralPart_1.push_back(firstParentСhromosome);
-			centralPart_2.push_back(secondParentСhromosome);
+		if (firstParentРЎhromosome != secondParentРЎhromosome) {
+			centralPart_1.push_back(firstParentРЎhromosome);
+			centralPart_2.push_back(secondParentРЎhromosome);
 		}
 
 		pth[i] = mas[abs(1 - numParent)]->path[i];
 	}
 
-	// удалим повторяющиеся элементы
+	// СѓРґР°Р»РёРј РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ СЌР»РµРјРµРЅС‚С‹
 	for (int i = 0; i < centralPart_1.size(); i++) {
 
 		int elem = centralPart_1[i];
@@ -606,26 +657,26 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 		}
 	}
 
-	// Перемешиваем центральную часть для дальнейшей замены повторяющихся элементов на невошедшие
+	// РџРµСЂРµРјРµС€РёРІР°РµРј С†РµРЅС‚СЂР°Р»СЊРЅСѓСЋ С‡Р°СЃС‚СЊ РґР»СЏ РґР°Р»СЊРЅРµР№С€РµР№ Р·Р°РјРµРЅС‹ РїРѕРІС‚РѕСЂСЏСЋС‰РёС…СЃСЏ СЌР»РµРјРµРЅС‚РѕРІ РЅР° РЅРµРІРѕС€РµРґС€РёРµ
 	for (int i = 0; i < centralPart_1.size() * 10; i++) {
 		int rnd1 = rand() % centralPart_1.size();
 		int rnd2 = rand() % centralPart_1.size();
-		// перемешиваем  родительский массив
+		// РїРµСЂРµРјРµС€РёРІР°РµРј  СЂРѕРґРёС‚РµР»СЊСЃРєРёР№ РјР°СЃСЃРёРІ
 		int tmp = (*centralPart[numParent])[rnd1];
 		(*centralPart[numParent])[rnd1] = (*centralPart[numParent])[rnd2];
 		(*centralPart[numParent])[rnd2] = tmp;
 	}
-	// сортируем НЕ родительскую середину 
+	// СЃРѕСЂС‚РёСЂСѓРµРј РќР• СЂРѕРґРёС‚РµР»СЊСЃРєСѓСЋ СЃРµСЂРµРґРёРЅСѓ 
 	sort((*centralPart[abs(1 - numParent)]).begin(), (*centralPart[abs(1 - numParent)]).end());
 
-	// Копируем первую часть до индекса из нужного родителя
+	// РљРѕРїРёСЂСѓРµРј РїРµСЂРІСѓСЋ С‡Р°СЃС‚СЊ РґРѕ РёРЅРґРµРєСЃР° РёР· РЅСѓР¶РЅРѕРіРѕ СЂРѕРґРёС‚РµР»СЏ
 	for (int i = 0; i < index; i++) {
 		pth[i] = mas[numParent]->path[i];
 
-		// ищем в НЕ родительской середине
+		// РёС‰РµРј РІ РќР• СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ СЃРµСЂРµРґРёРЅРµ
 		int it = BinSearch(*centralPart[abs(1 - numParent)], pth[i]);
 		if (it != -1) {
-			// вставляем соответствующий элемент из родительской середины вместо повторяющегося
+			// РІСЃС‚Р°РІР»СЏРµРј СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚ РёР· СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ СЃРµСЂРµРґРёРЅС‹ РІРјРµСЃС‚Рѕ РїРѕРІС‚РѕСЂСЏСЋС‰РµРіРѕСЃСЏ
 			pth[i] = (*centralPart[numParent])[it];
 		}
 
@@ -633,14 +684,14 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 
 
 
-	// Копируем оставшуюся часть
+	// РљРѕРїРёСЂСѓРµРј РѕСЃС‚Р°РІС€СѓСЋСЃСЏ С‡Р°СЃС‚СЊ
 	for (int i = index + sizeCrossOverWindow; i < firstParent->path.size(); i++) {
 		pth[i] = mas[numParent]->path[i];
 
-		// ищем в НЕ родительской середине
+		// РёС‰РµРј РІ РќР• СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ СЃРµСЂРµРґРёРЅРµ
 		int it = BinSearch(*centralPart[abs(1 - numParent)], pth[i]);
 		if (it != -1) {
-			// вставляем соответствующий элемент из родительской середины вместо повторяющегося
+			// РІСЃС‚Р°РІР»СЏРµРј СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ СЌР»РµРјРµРЅС‚ РёР· СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ СЃРµСЂРµРґРёРЅС‹ РІРјРµСЃС‚Рѕ РїРѕРІС‚РѕСЂСЏСЋС‰РµРіРѕСЃСЏ
 			pth[i] = (*centralPart[numParent])[it];
 		}
 
@@ -654,7 +705,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	Individ* result = new Individ();
 	result->path = pth;
 
-	/// проверяем
+	/// РїСЂРѕРІРµСЂСЏРµРј
 	set<int> testEquals;
 	for (int i = 1; i < pth.size(); i++) {
 		if (find(testEquals.begin(), testEquals.end(), pth[i]) != testEquals.end()) {
@@ -668,13 +719,13 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	return result;
 }
 
-// Бинарный поиск в массиве
+// Р‘РёРЅР°СЂРЅС‹Р№ РїРѕРёСЃРє РІ РјР°СЃСЃРёРІРµ
 int GA::BinSearch(vector<int>  &arr, int key)
 {
 	/*
 	int count = arr.size();
-	int l = 0;            // нижняя граница
-	int u = count - 1;    // верхняя граница
+	int l = 0;            // РЅРёР¶РЅСЏСЏ РіСЂР°РЅРёС†Р°
+	int u = count - 1;    // РІРµСЂС…РЅСЏСЏ РіСЂР°РЅРёС†Р°
 
 	while (l <= u) {
 		int m = (l + u) / 2;
@@ -698,12 +749,12 @@ void GA::mutationIndivid(Individ* individ)
 	int first = 1 + rand() % (n - 1);
 	int second = 1 + rand() % (n - 1);
 	for (int i = 0; i < countSwapInMutation; i++) {
-		// Меняем два элемента местами
+		// РњРµРЅСЏРµРј РґРІР° СЌР»РµРјРµРЅС‚Р° РјРµСЃС‚Р°РјРё
 		int tmp = individ->path[first];
 		individ->path[first] = individ->path[second];
 		individ->path[second] = tmp;
 
-		// Дальше будем менять только что поменянный элемент с новым, чтобы за раз новое место получал один элемент а не 2
+		// Р”Р°Р»СЊС€Рµ Р±СѓРґРµРј РјРµРЅСЏС‚СЊ С‚РѕР»СЊРєРѕ С‡С‚Рѕ РїРѕРјРµРЅСЏРЅРЅС‹Р№ СЌР»РµРјРµРЅС‚ СЃ РЅРѕРІС‹Рј, С‡С‚РѕР±С‹ Р·Р° СЂР°Р· РЅРѕРІРѕРµ РјРµСЃС‚Рѕ РїРѕР»СѓС‡Р°Р» РѕРґРёРЅ СЌР»РµРјРµРЅС‚ Р° РЅРµ 2
 		first = second;
 		second = 1 + rand() % (n - 1);
 	}

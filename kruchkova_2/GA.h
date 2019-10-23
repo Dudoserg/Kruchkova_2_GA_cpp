@@ -35,7 +35,7 @@ public:
 
 	vector<Individ*> newPopulation;
 
-	int sizePopulation = 60;
+	int sizePopulation = 100;
 	int startVertex = 0;
 
 	int minimalFitnes = 9999;
