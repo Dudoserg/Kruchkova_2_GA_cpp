@@ -71,9 +71,9 @@ void GA::readData()
 				resultNum.push_back(stoi(result[i]));
 			}
 			readedInfo.push_back(resultNum);
-			#ifdef DEBUG
+#ifdef DEBUG_ON
 			std::cout << str << std::endl;
-			#endif
+#endif
 		}
 	}
 	in.close();     // закрываем файл
@@ -165,13 +165,13 @@ Individ * GA::createIndividual()
 {
 	//int *currentPopulation = new int[n + 1];
 
-	vector<int> currentPopulation(n+1);
+	vector<int> currentPopulation(n + 1);
 
 	for (int i = 0; i < n; i++) {
 		currentPopulation[i] = i;
 	}
 	// на первое место нужно поставить стартовую вершину, и потом ее не трогать, при перемешивании
-	
+
 	for (int i = 0; i < n; i++) {
 		if (currentPopulation[i] == startVertex) {
 			int tmp = currentPopulation[0];
@@ -187,8 +187,8 @@ Individ * GA::createIndividual()
 	int secondRand = 0;
 	int tmp = 0;
 	for (int i = 0; i < n * 10; i++) {
-		firstRand = rand() % (n-1) + 1;
-		secondRand = rand() % (n-1) + 1;
+		firstRand = rand() % (n - 1) + 1;
+		secondRand = rand() % (n - 1) + 1;
 
 		tmp = currentPopulation[firstRand];
 		currentPopulation[firstRand] = currentPopulation[secondRand];
@@ -215,14 +215,14 @@ void GA::calculatePathFromVertexToAll(int startVertex)
 	vector<char> u(n);
 	for (int i = 0; i < n; ++i) {
 		int v = -1;
-		for (int j = 0; j<n; ++j)
+		for (int j = 0; j < n; ++j)
 			if (!u[j] && (v == -1 || d[j] < d[v]))
 				v = j;
 		if (d[v] == INF)
 			break;
 		u[v] = true;
 
-		for (size_t j = 0; j<data[v].size(); ++j) {
+		for (size_t j = 0; j < data[v].size(); ++j) {
 			int to = data[v][j].first,
 				len = data[v][j].second;
 			if (d[v] + len < d[to]) {
@@ -249,7 +249,7 @@ void GA::calculatePathFromVertexToAll(int startVertex)
 		path.push_back(s);
 		reverse(path.begin(), path.end());
 
-#ifdef DEBUG
+#ifdef DEBUG_ON
 		cout << "path from " << s << " to " << t << ": ";
 
 		for (int i = 0; i < path.size(); i++) {
@@ -269,7 +269,7 @@ void GA::calculatePathFromVertexToAll(int startVertex)
 		// Сохраняем путь в глобальный массив
 		pathFromTo.push_back(currPath);
 	}
-#ifdef DEBUG
+#ifdef DEBUG_ON
 	cout << endl;
 #endif
 
@@ -306,12 +306,12 @@ void GA::createFirstPopulation()
 {
 	for (int i = 0; i < sizePopulation; i++) {
 		Individ* individ = createIndividual();
-		#ifdef  DEBUG
+#ifdef  DEBUG_ON
 		cout << "individ # " << i + 1 << endl;
 		for (int j = 0; j < individ->path.size(); j++)
 			cout << individ->path[j] << " ";
 		cout << endl;
-		#endif //  DEBUG
+#endif //  DEBUG_ON
 
 		population.push_back(individ);
 	}
@@ -320,15 +320,78 @@ void GA::createFirstPopulation()
 
 void GA::fitness()
 {
-	//const int length = 5;
-	//thread thread_array[length];
+#if THREAD_FITNESS == 1
+	
 
+	vector<pair<int, int>> indexForThread;
+
+	// рассчитываем индексы индивидов в популяции, которые будут вычислятьяс в потоках
+	// индексы зависят от количества потоков
+	int countIndividInThread = population.size() / threadFitnessCount;
+	int tmp = 0;
+	while (true)
+	{
+		int first = tmp;
+
+		tmp += countIndividInThread;
+
+		int second = tmp;
+
+		if (second >= population.size()) {
+
+			second = population.size();
+			indexForThread.push_back(pair<int, int>(first, second));
+			break;
+		}
+		indexForThread.push_back(pair<int, int>(first, second));
+
+	}
+
+	// массив потоков
+	vector<thread> thread_array(threadFitnessCount);
+	// создаем и запускаем потоки
+	for (int i = 0; i < threadFitnessCount; i++) {
+		// используем лябду функцию
+		thread_array[i] = thread(
+			[&](int startIndex, int secondIndex)
+		{
+			for (int i = startIndex; i < secondIndex; i++) {
+				int x = fitnessForIndivid(population[i]);
+				population[i]->fitness = x;
+			}
+		}, indexForThread[i].first, indexForThread[i].second
+			);
+	}
+	// ждем остановки потоков
+	for (int i = 0; i < threadFitnessCount; i++) {
+		if (thread_array[i].joinable()) {
+			thread_array[i].join();
+		}
+	}
+	// теперь можем двигаться дальше
+	cout << "";
+#endif // THREAD_FITNESS_ON
+
+#if THREAD_FITNESS == 0
 	for (int i = 0; i < population.size(); i++) {
 		int x = fitnessForIndivid(population[i]);
 		population[i]->fitness = x;
 	}
 	cout << "";
+#endif // THREAD_FITNESS_OFF
+
+
+
+
+
 }
+
+//void  GA::startFitness(int startIndex, int secondIndex) {
+//	for (int i = startIndex; i < secondIndex; i++) {
+//		int x = fitnessForIndivid(population[i]);
+//		population[i]->fitness = x;
+//	}
+//}
 
 
 int GA::fitnessForIndivid(Individ * individ)
@@ -341,14 +404,14 @@ int GA::fitnessForIndivid(Individ * individ)
 		int weight = -1;
 
 		weight = paths[first][second]->weight;
-		
+
 		if (weight != -1)
 			sum += weight;
 		else
 			cout << "=========error==========" << endl;
 	}
 
-	
+
 
 	if (sum < minimalFitnes) {
 		minimalFitnes = sum;
@@ -356,7 +419,7 @@ int GA::fitnessForIndivid(Individ * individ)
 	}
 
 	return sum;
-	
+
 }
 
 
@@ -378,6 +441,7 @@ void GA::calculatePercent() {
 
 
 void GA::reproduction() {
+
 	iterationNum++;
 	vector<pair<int, int>> indexForReproduction;
 
@@ -427,7 +491,7 @@ void GA::reproduction() {
 		//delete(population[i]);
 		population.push_back(newPopulation[i]);
 	}
-	
+
 	cout << "";
 	/*Individ* first = new Individ();
 	vector<int> firstVector;
@@ -456,7 +520,7 @@ void GA::reproduction() {
 	second->path = secondVector;
 
 	crossOver(first, second);*/
-	
+
 }
 
 // Получаем потомка от двух родителей методом Кросс-Овер
@@ -474,7 +538,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	//numParent = 1;
 
 	Individ** mas = new Individ*[2];
-	mas[0] = firstParent; 
+	mas[0] = firstParent;
 	mas[1] = secondParent;
 
 	// Копируем среднюю часть
@@ -510,7 +574,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	for (int i = 0; i < centralPart_1.size(); i++) {
 
 		int elem = centralPart_1[i];
-		int index = BinSearch(centralPart_2,  elem);
+		int index = BinSearch(centralPart_2, elem);
 
 		if (index != -1) {
 			centralPart_2.erase(centralPart_2.begin() + index);
@@ -518,7 +582,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 			i--;
 		}
 	}
-	
+
 	// Перемешиваем центральную часть для дальнейшей замены повторяющихся элементов на невошедшие
 	for (int i = 0; i < centralPart_1.size() * 10; i++) {
 		int rnd1 = rand() % centralPart_1.size();
@@ -530,13 +594,13 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	}
 	// сортируем НЕ родительскую середину 
 	sort((*centralPart[abs(1 - numParent)]).begin(), (*centralPart[abs(1 - numParent)]).end());
-	
+
 	// Копируем первую часть до индекса из нужного родителя
 	for (int i = 0; i < index; i++) {
 		pth[i] = mas[numParent]->path[i];
 
 		// ищем в НЕ родительской середине
-		int it = BinSearch(*centralPart[abs(1 - numParent)],  pth[i]);
+		int it = BinSearch(*centralPart[abs(1 - numParent)], pth[i]);
 		if (it != -1) {
 			// вставляем соответствующий элемент из родительской середины вместо повторяющегося
 			pth[i] = (*centralPart[numParent])[it];
@@ -544,7 +608,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 
 	}
 
-	
+
 
 	// Копируем оставшуюся часть
 	for (int i = index + sizeCrossOverWindow; i < firstParent->path.size(); i++) {
@@ -556,9 +620,9 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 			// вставляем соответствующий элемент из родительской середины вместо повторяющегося
 			pth[i] = (*centralPart[numParent])[it];
 		}
-	
+
 	}
-#ifdef DEBUG
+#ifdef DEBUG_ON
 	for (int i = 0; i < pth.size(); i++) {
 		cout << pth[i] << " ";
 	}
@@ -615,7 +679,7 @@ void GA::mutationIndivid(Individ* individ)
 		int tmp = individ->path[first];
 		individ->path[first] = individ->path[second];
 		individ->path[second] = tmp;
-		
+
 		// Дальше будем менять только что поменянный элемент с новым, чтобы за раз новое место получал один элемент а не 2
 		first = second;
 		second = 1 + rand() % (n - 1);

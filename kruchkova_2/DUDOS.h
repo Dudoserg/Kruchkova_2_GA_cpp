@@ -1,2 +1,3 @@
 #pragma once
-#define DEBU1G
+#define DEBUG_OFF
+#define THREAD_FITNESS 1

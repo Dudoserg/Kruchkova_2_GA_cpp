@@ -18,11 +18,17 @@ public:
 	~GA();
 
 	// fields
-	const int INF = 1000000000;
-	int sizePopulation = 6;
+	static const int INF = 1000000000;
+	// размер окна в кроссовере
+	static const int sizeCrossOverWindow = 3;
+	// количество мутаций 
+	static const int countSwapInMutation = 2;
+	// Количество потоков в вычислении  FITNESS
+	const int threadFitnessCount = 4;
+
+	int sizePopulation = 100;
 	int startVertex = 0;
-	int sizeCrossOverWindow = 3;
-	int countSwapInMutation = 2;
+
 	int minimalFitnes = 9999;
 	int minimalFitnesIteration = 9999;
 	int iterationNum = 0;
@@ -41,6 +47,10 @@ public:
 	void createFirstPopulation();
 
 	void fitness();
+
+	//void startFitness(int startIndex, int secondIndex);
+
+	int fitnessForIndivid(Individ* individ);
 
 	void calculatePercent();
 
@@ -74,7 +84,7 @@ private:
 	// создаем одну особь
 	Individ* createIndividual();
 
-	int fitnessForIndivid(Individ* individ);
+	
 
 	void mutationIndivid(Individ* individ);
 
