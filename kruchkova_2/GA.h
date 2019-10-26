@@ -6,6 +6,10 @@
 #include "Individ.h"
 #include "Path.h"
 
+
+
+
+
 using std::vector;
 using std::pair;
 using namespace std;
@@ -30,7 +34,7 @@ public:
 	// размер окна в кроссовере
 	static const int sizeCrossOverWindow = 3;
 	// количество мутаций 
-	static const int countSwapInMutation = 2;
+	static const int countSwapInMutation = 3;
 
 
 	vector<Individ*> newPopulation;

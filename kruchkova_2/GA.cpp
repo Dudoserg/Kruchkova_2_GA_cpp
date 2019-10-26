@@ -13,6 +13,9 @@
 #include <string>
 #include<cstdlib> 
 #include<thread>
+
+
+
 GA::GA()
 {
 
@@ -320,6 +323,7 @@ void GA::createFirstPopulation()
 
 void GA::fitness()
 {
+	
 #if THREAD_FITNESS == 1
 	
 
@@ -417,6 +421,7 @@ int GA::fitnessForIndivid(Individ * individ)
 
 
 void GA::calculatePercent() {
+	std::sort(population.begin(), population.end(), Individ::testSort);
 	double ss = 0.0;
 
 	for (int i = 0; i < population.size(); i++) {
@@ -434,6 +439,8 @@ void GA::calculatePercent() {
 
 
 void GA::reproduction() {
+
+	std::sort(population.begin(), population.end(), Individ::testSort);
 
 	#if THREAD_REPRODUCTION == 1
 	// Генерируем индексы родителей для получения потомства
@@ -499,32 +506,34 @@ void GA::reproduction() {
 	}
 
 	// массив потоков
-	vector<thread> thread_array(THREAD_FITNESS_COUNT);
+	vector<thread> thread_array(THREAD_REPRODUCTION_COUNT);
 
 	// создаем и запускаем потоки
-
-	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
+	newPopulation.resize(population.size());
+	for (int i = 0; i < THREAD_REPRODUCTION_COUNT; i++) {
 		// используем лябду функцию
 		thread_array[i] = thread(
 			[&](int startIndex, int secondIndex, vector<pair<int, int>> indexForReproduction)
 		{
 			for (int i = startIndex; i < secondIndex; i++) {
 				int x = 4;
-				Individ * tmpIndivid = crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]);
+				Individ * tmpIndivid;
+				tmpIndivid = crossOver(population[indexForReproduction[i].first], population[indexForReproduction[i].second]);
 
-				newPopulation.push_back(tmpIndivid);
+				//newPopulation.push_back(tmpIndivid);
+				newPopulation[i] = tmpIndivid;
 			}
 		}, indexForThread[i].first, indexForThread[i].second, indexForReproduction
 			);
 	}
 	// ждем остановки потоков
-	for (int i = 0; i < THREAD_FITNESS_COUNT; i++) {
+	for (int i = 0; i < THREAD_REPRODUCTION_COUNT; i++) {
 		if (thread_array[i].joinable()) {
 			thread_array[i].join();
 		}
 	}
 	// теперь можем двигаться дальше
-	
+	//population.clear();
 	// копируем новых потомков в основную популяцию
 	for (int i = 0; i < newPopulation.size(); i++) {
 		population.push_back(newPopulation[i]);
@@ -550,6 +559,7 @@ void GA::reproduction() {
 	// ÷åì ìåíüøå äëèíà ìàðøðóòà òåì âûøå èíäåêñ âûæèâàíèÿ
 	for (int i = 0; i < population.size(); i++) {
 		double random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		//random /= 2.0;
 		double sum = 0.0;
 
 		int indexFirstParent = 0;
@@ -565,6 +575,7 @@ void GA::reproduction() {
 		int indexSecondParent = -1;
 		do {
 			random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+			//random /= 2.0;
 			sum = 0.0;
 
 			for (int i = 0; i < population.size(); i++) {
@@ -591,6 +602,7 @@ void GA::reproduction() {
 		//delete(population[i]);
 		population.push_back(newPopulation[i]);
 	}
+	newPopulation.clear();
 
 	#endif // THREAD_REPRODUCTION == 0
 
@@ -717,6 +729,7 @@ Individ* GA::crossOver(Individ* firstParent, Individ* secondParent)
 	}
 
 	return result;
+
 }
 
 // Бинарный поиск в массиве
@@ -764,7 +777,7 @@ void GA::mutationIndivid(Individ* individ)
 void GA::mutation()
 {
 	std::sort(population.begin(), population.end(), Individ::testSort);
-	for (int i = 1; i < population.size(); i++) {
+	for (int i = population.size() / 2; i < population.size(); i++) {
 		mutationIndivid(population[i]);
 	}
 }
