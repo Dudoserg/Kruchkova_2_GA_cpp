@@ -30,6 +30,10 @@ public:
 	// Количество потоков в вычислении REPRODUCTION
 	const int THREAD_REPRODUCTION_COUNT = 4;
 
+
+	// количество островов
+	const int THREAD_COUNT_ISLAND = 2;
+
 	static const int INF = 1000000000;
 	// размер окна в кроссовере
 	static const int sizeCrossOverWindow = 3;

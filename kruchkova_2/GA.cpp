@@ -776,10 +776,10 @@ void GA::mutationIndivid(Individ* individ)
 
 void GA::mutation()
 {
-	std::sort(population.begin(), population.end(), Individ::testSort);
+	/*std::sort(population.begin(), population.end(), Individ::testSort);
 	for (int i = population.size() ; i < population.size(); i++) {
 		mutationIndivid(population[i]);
-	}
+	}*/
 }
 
 void GA::killWeakIndivid()
