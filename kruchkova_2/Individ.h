@@ -20,7 +20,8 @@ public:
 
 	static bool testSort(const Individ* a, const Individ* b)
 	{
-		return a->percent > b->percent;
+		return a->fitness < b->fitness; //return a->percent > b->percent;
+
 	}
 private:
 };
