@@ -100,7 +100,6 @@ void GA::readData()
 		int first = readedInfo[i][0];
 		int second = readedInfo[i][1];
 		int weight = readedInfo[i][2];
-
 		pair<int, int> para(second, weight);
 		data[first].push_back(para);
 	}
