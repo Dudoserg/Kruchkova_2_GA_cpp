@@ -32,7 +32,7 @@ public:
 
 
 	// количество островов
-	static const int THREAD_COUNT_ISLAND = 2;
+	static const int THREAD_COUNT_ISLAND = 4;
 
 	static const int INF = 1000000000;
 	// размер окна в кроссовере
