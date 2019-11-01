@@ -24,15 +24,15 @@ public:
 	// fields
 
 	// Количество потоков в вычислении  FITNESS
-	const int THREAD_FITNESS_COUNT = 4;
+	static const int THREAD_FITNESS_COUNT = 2;
 
 
 	// Количество потоков в вычислении REPRODUCTION
-	const int THREAD_REPRODUCTION_COUNT = 4;
+	static const int THREAD_REPRODUCTION_COUNT = 2;
 
 
 	// количество островов
-	const int THREAD_COUNT_ISLAND = 2;
+	static const int THREAD_COUNT_ISLAND = 2;
 
 	static const int INF = 1000000000;
 	// размер окна в кроссовере

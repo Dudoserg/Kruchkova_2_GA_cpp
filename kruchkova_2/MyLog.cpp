@@ -6,7 +6,7 @@
 #include <stdarg.h>
 
 
-MyLog::Status MyLog::status = MyLog::Status::INFO;
+MyLog::Status MyLog::status = MyLog::Status::RELEASE;
 
 MyLog::MyLog()
 {

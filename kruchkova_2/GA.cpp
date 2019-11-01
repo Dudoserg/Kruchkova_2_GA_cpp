@@ -588,7 +588,10 @@ void GA::reproduction() {
 		} while (indexSecondParent == indexFirstParent);
 
 		//std::cout << indexFirstParent << " " << indexSecondParent << endl;
-
+		if (indexFirstParent < 0)
+			indexFirstParent = 1;
+		if (indexSecondParent < 0)
+			indexSecondParent = 1;
 		indexForReproduction.push_back(std::pair<int, int>(indexFirstParent, indexSecondParent));
 	}
 
